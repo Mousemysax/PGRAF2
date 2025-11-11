@@ -15,17 +15,23 @@ public class SeedFill implements Filler {
 
     }
 
-    private void  floodFill4(int x, int y, Color oldColor, Color newColor) {
+    public void  floodFill4(int x, int y, Color oldColor, Color newColor) {
         if(x>= 0 && y>= 0 && x < raster.getWidth() && y < raster.getHeight()) {
-            if(raster.getPixel(x, y) == oldColor.getRGB()) {
-                raster.setPixel(x,y,newColor.getRGB());
-                floodFill4(x+1, y, oldColor, newColor);
-                floodFill4(x-1, y, oldColor, newColor);
-                floodFill4(x, y+1, oldColor, newColor);
-                floodFill4(x, y-1, oldColor, newColor);
+            try {
+                if(raster.getPixel(x, y) == oldColor.getRGB()) {
+                    raster.setPixel(x,y,newColor.getRGB());
+                    System.out.println(x+" "+y);
+                    floodFill4(x+1, y, oldColor, newColor);
+                    floodFill4(x-1, y, oldColor, newColor);
+                    floodFill4(x, y+1, oldColor, newColor);
+                    floodFill4(x, y-1, oldColor, newColor);
+                }
             }
-        }
+            catch(Exception e) {
+                System.out.println(e.getMessage());
+            }
 
+        }
     }
 
     private void  floodFill8(int x, int y, Color oldColor, Color newColor) {

@@ -6,6 +6,7 @@ import model.objectdata.Polygon;
 import model.rasterdata.Raster;
 import model.rasterops.fill.Filler;
 import model.rasterops.fill.ScanLine;
+import model.rasterops.fill.SeedFill;
 import model.rasterops.rasterizers.LineRasterizerTrivial;
 import model.rasterops.rasterizers.PolygonRasterizer;
 import view.Panel;
@@ -21,21 +22,23 @@ public class Controller2D implements Controller {
     private final Raster raster;
     private LineRasterizerTrivial lrt;
     private PolygonRasterizer pr;
-
+    private SeedFill filler;
 
     public Polygon polygon;
     public Line line;
     public Boolean shiftMode = false;
     public Boolean polygonMode = false;
+    public Point2D mousePos = new Point2D(0,0);
     private ArrayList<Line> lineList = new ArrayList<>();
     private ArrayList<Polygon> polygonList = new ArrayList<>();
+    private ArrayList<Point2D> seedList = new ArrayList<>();
 
     public Controller2D(Panel panel) {
         this.panel = panel;
         this.raster = panel.getRaster();
         this.lrt = new LineRasterizerTrivial(raster);
         this.pr = new PolygonRasterizer(raster,lrt);
-
+        this.filler = new SeedFill(raster);
         raster.clear();
         initObjects(raster);
         initListeners(panel);
@@ -48,7 +51,6 @@ public class Controller2D implements Controller {
     public void initObjects(Raster raster) {
         polygon = new Polygon();
         line = new Line(new Point2D(10,100,Color.blue),new Point2D(20,300,Color.magenta));
-
 
     }
 
@@ -67,12 +69,16 @@ public class Controller2D implements Controller {
 
         }
 
+
         for (Polygon poly : polygonList){
             Filler fl = new ScanLine(poly,lrt,pr);
-            fl.fill();
+            pr.rasterize(poly);
         }
         pr.rasterize(polygon);
         lrt.drawLineColorLerp(line);
+        for(Point2D seed : seedList){
+            filler.floodFill4(seed.x,seed.y,new Color(0x16161D),Color.cyan);
+        }
         panel.repaint();
     }
 
@@ -118,6 +124,9 @@ public class Controller2D implements Controller {
         render(raster);
     }
 
+    public void addSeed(Point2D seedPoint){
+        seedList.add(seedPoint);
+    }
 
     /**
      * Clears canvas and all the data structures
