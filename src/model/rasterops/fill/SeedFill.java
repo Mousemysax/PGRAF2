@@ -15,7 +15,7 @@ public class SeedFill implements Filler {
 
     }
 
-    private void  floodFill4(int x, int y, Color oldColor, Color newColor) {
+    public void  floodFill4(int x, int y, Color oldColor, Color newColor) {
         if(x>= 0 && y>= 0 && x < raster.getWidth() && y < raster.getHeight()) {
             if(raster.getPixel(x, y) == oldColor.getRGB()) {
                 raster.setPixel(x,y,newColor.getRGB());

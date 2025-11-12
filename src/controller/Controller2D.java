@@ -6,6 +6,7 @@ import model.objectdata.Polygon;
 import model.rasterdata.Raster;
 import model.rasterops.fill.Filler;
 import model.rasterops.fill.ScanLine;
+import model.rasterops.fill.SeedFill;
 import model.rasterops.rasterizers.LineRasterizerTrivial;
 import model.rasterops.rasterizers.PolygonRasterizer;
 import view.Panel;
@@ -21,13 +22,16 @@ public class Controller2D implements Controller {
     private final Raster raster;
     private LineRasterizerTrivial lrt;
     private PolygonRasterizer pr;
+    private SeedFill seedFiller;
 
 
     public Polygon polygon;
     public Line line;
     public Boolean shiftMode = false;
     public Boolean polygonMode = false;
+    public Point2D mousePos = new Point2D(0,0);
     private ArrayList<Line> lineList = new ArrayList<>();
+    private ArrayList<Point2D> seedList = new ArrayList<>();
     private ArrayList<Polygon> polygonList = new ArrayList<>();
 
     public Controller2D(Panel panel) {
@@ -35,6 +39,7 @@ public class Controller2D implements Controller {
         this.raster = panel.getRaster();
         this.lrt = new LineRasterizerTrivial(raster);
         this.pr = new PolygonRasterizer(raster,lrt);
+        this.seedFiller = new SeedFill(raster);
 
         raster.clear();
         initObjects(raster);
@@ -68,8 +73,10 @@ public class Controller2D implements Controller {
         }
 
         for (Polygon poly : polygonList){
-            Filler fl = new ScanLine(poly,lrt,pr);
-            fl.fill();
+            pr.rasterize(poly);
+        }
+        for (Point2D seed : seedList){
+            seedFiller.floodFill4(seed.x,seed.y,new Color(0x16161D),Color.cyan);
         }
         pr.rasterize(polygon);
         lrt.drawLineColorLerp(line);
@@ -118,6 +125,9 @@ public class Controller2D implements Controller {
         render(raster);
     }
 
+    public void addSeed(Point2D seedPoint){
+        seedList.add(seedPoint);
+    }
 
     /**
      * Clears canvas and all the data structures
