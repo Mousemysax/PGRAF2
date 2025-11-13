@@ -1,10 +1,20 @@
 package model.objectdata;
 
+import java.awt.*;
 import java.util.ArrayList;
 
 public class Polygon {
 
     private ArrayList<Point2D> vertices;
+    private Color color = Color.gray;
+
+    public Color getColor() {
+        return color;
+    }
+
+    public void setColor(Color color) {
+        this.color = color;
+    }
 
     public Polygon() {
         this.vertices = new ArrayList<>();

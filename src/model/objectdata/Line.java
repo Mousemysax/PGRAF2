@@ -40,6 +40,9 @@ public class Line {
         }
         return new Line(start,end);
     }
+    public Line shortened(){
+        return new Line(start.x,start.y,end.x,end.y-1);
+    }
     public int getIntersectionY(int y){
         int y1 = this.start.y;
         int y2 = this.end.y;
