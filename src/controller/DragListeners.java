@@ -52,6 +52,6 @@ public class DragListeners implements MouseMotionListener {
 
     @Override
     public void mouseMoved(MouseEvent e) {
-        controller.mousePos = new Point2D(e.getX(), e.getY());
+        controller.mousePos = new Point2D(e.getX(),e.getY());
     }
 }

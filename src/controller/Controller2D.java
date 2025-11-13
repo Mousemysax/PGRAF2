@@ -15,6 +15,7 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Random;
 
 public class Controller2D implements Controller {
 
@@ -22,23 +23,29 @@ public class Controller2D implements Controller {
     private final Raster raster;
     private LineRasterizerTrivial lrt;
     private PolygonRasterizer pr;
-    private SeedFill filler;
+    private SeedFill seedFiller;
+    private ScanLine scanLine;
+
 
     public Polygon polygon;
     public Line line;
-    public Boolean shiftMode = false;
-    public Boolean polygonMode = false;
+    public boolean shiftMode = false;
+    public boolean polygonMode = false;
     public Point2D mousePos = new Point2D(0,0);
     private ArrayList<Line> lineList = new ArrayList<>();
-    private ArrayList<Polygon> polygonList = new ArrayList<>();
     private ArrayList<Point2D> seedList = new ArrayList<>();
+    private ArrayList<Polygon> polygonList = new ArrayList<>();
+    private Random rand = new Random();
 
     public Controller2D(Panel panel) {
         this.panel = panel;
         this.raster = panel.getRaster();
         this.lrt = new LineRasterizerTrivial(raster);
         this.pr = new PolygonRasterizer(raster,lrt);
-        this.filler = new SeedFill(raster);
+        this.seedFiller = new SeedFill(raster);
+        this.scanLine = new ScanLine(lrt,pr);
+
+
         raster.clear();
         initObjects(raster);
         initListeners(panel);
@@ -51,6 +58,7 @@ public class Controller2D implements Controller {
     public void initObjects(Raster raster) {
         polygon = new Polygon();
         line = new Line(new Point2D(10,100,Color.blue),new Point2D(20,300,Color.magenta));
+
 
     }
 
@@ -69,15 +77,14 @@ public class Controller2D implements Controller {
 
         }
 
-
         for (Polygon poly : polygonList){
-            Filler fl = new ScanLine(poly,lrt,pr);
-            pr.rasterize(poly);
+            scanLine.scanLineFill(poly);
         }
+
         pr.rasterize(polygon);
         lrt.drawLineColorLerp(line);
-        for(Point2D seed : seedList){
-            filler.floodFill4(seed.x,seed.y,new Color(0x16161D),Color.cyan);
+        for (Point2D seed : seedList){
+            seedFiller.floodFill4(seed.x,seed.y,new Color(0x16161D),Color.cyan);
         }
         panel.repaint();
     }
@@ -88,6 +95,7 @@ public class Controller2D implements Controller {
     }
 
     public void bakePolygon(){
+        polygon.setColor(new Color(rand.nextInt(255),rand.nextInt(255),rand.nextInt(255)));
         polygonList.add(polygon);
         polygon = new Polygon();
     }
