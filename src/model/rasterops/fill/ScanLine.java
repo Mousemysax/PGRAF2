@@ -61,10 +61,8 @@ public class ScanLine implements Filler{
 
         for (Line lajna : scanLines) {
             lr.drawLineColorLerp(lajna);
-            System.out.println(lajna.start.y+","+lajna.start.x + " " + lajna.end.y+","+lajna.end.x);
         }
 
         pr.rasterize(polygon);
-        System.out.println("penis");
     }
 }

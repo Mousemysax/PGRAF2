@@ -1,6 +1,7 @@
 package model.objectdata;
 
 import java.awt.*;
+import java.util.Vector;
 
 public class Line {
     public final Point2D start;
@@ -40,6 +41,13 @@ public class Line {
         }
         return new Line(start,end);
     }
+
+    public Line orientatedX(){
+        if(start.x > end.x){
+            return new Line(end,start);
+        }
+        return new Line(start,end);
+    }
     public Line shortened(){
         return new Line(start.x,start.y,end.x,end.y-1);
     }
@@ -57,6 +65,34 @@ public class Line {
         }
         double q = y1 - k * x1;
         return (int) ((y - q)/k);
+    }
+
+    public int getDistanceToPoint(Point2D point){
+        int y1 = this.start.y;
+        int y2 = this.end.y;
+        int x1 = this.start.x;
+        int x2 = this.end.x;
+        double k = (double) (y2 - y1) / (x2 - x1);
+        if(Double.isNaN(k)||Double.isInfinite(k)){
+            k = Integer.MAX_VALUE;
+        }
+        double q = y1 - k * x1;
+
+        return (int) ((k*point.x-point.y+q)/Math.sqrt(k*k+1));
+    }
+
+    public Double[] getNormal(){
+        Double[] normal = new Double[2];
+        int y1 = this.start.y;
+        int y2 = this.end.y;
+        int x1 = this.start.x;
+        int x2 = this.end.x;
+        normal[0] = (double) (y1-y2);
+        normal[1] = (double) (x2-x1);
+        float length = (float) Math.sqrt(normal[0]*normal[0]+normal[1]*normal[1]);
+        normal[0] /= -length;
+        normal[1] /= -length;
+        return normal;
     }
 
 }

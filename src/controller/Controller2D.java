@@ -3,6 +3,7 @@ package controller;
 import model.objectdata.Line;
 import model.objectdata.Point2D;
 import model.objectdata.Polygon;
+import model.objectdata.Rectangle;
 import model.rasterdata.Raster;
 import model.rasterops.fill.Filler;
 import model.rasterops.fill.ScanLine;
@@ -31,6 +32,8 @@ public class Controller2D implements Controller {
     public Line line;
     public boolean shiftMode = false;
     public boolean polygonMode = false;
+    public boolean rectMode = false;
+    public boolean rectSecondStage = false;
     public Point2D mousePos = new Point2D(0,0);
     private ArrayList<Line> lineList = new ArrayList<>();
     private ArrayList<Point2D> seedList = new ArrayList<>();
@@ -136,6 +139,9 @@ public class Controller2D implements Controller {
         seedList.add(seedPoint);
     }
 
+    public void constructRect(Line line, Point2D point){
+        polygon = new Rectangle(new ArrayList<Point2D>(),line,point);
+    }
     /**
      * Clears canvas and all the data structures
      */
