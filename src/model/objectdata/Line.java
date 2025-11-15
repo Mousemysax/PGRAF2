@@ -1,8 +1,5 @@
 package model.objectdata;
 
-import java.awt.*;
-import java.util.Vector;
-
 public class Line {
     public final Point2D start;
     public final Point2D end;
@@ -35,7 +32,7 @@ public class Line {
         return end;
     }
 
-    public Line orientated(){
+    public Line orientatedY(){
         if(start.y > end.y){
             return new Line(end,start);
         }
@@ -67,18 +64,72 @@ public class Line {
         return (int) ((y - q)/k);
     }
 
+    public Point2D getIntersectionLine(Line a, Line b){
+        Point2D result = new Point2D(0,0);
+        int x1 = a.getStart().x;
+        int x2 = a.getEnd().x;
+        int x3 = b.getStart().x;
+        int x4 = b.getEnd().x;
+        int y1 = a.getStart().y;
+        int y2 = a.getEnd().y;
+        int y3 = b.getStart().y;
+        int y4 = b.getEnd().y;
+
+        double denominator = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
+
+        if (denominator == 0) {
+            return null;
+        }
+
+        double term1 = (x1 * y2 - x2 * y1);
+        double term2 = (x3 * y4 - x4 * y3);
+
+        result.x = (int) ((term1 * (x3 - x4) - term2 * (x1 - x2)) / denominator);
+        result.y = (int) ((term1 * (y3 - y4) - term2 * (y1 - y2)) / denominator);
+
+//        if (!a.isOnLine(result)||!b.isOnLine(result))
+//            return null;
+
+        return result;
+
+
+    }
+
+    public boolean isOnLine(Point2D p){
+
+        return (p.x>start.x&&p.x<end.x||p.x>end.x&&p.x<start.x)&&(p.y>start.y&&p.y<end.y||p.y>end.y&&p.y<start.y);
+    }
+
     public int getDistanceToPoint(Point2D point){
         int y1 = this.start.y;
         int y2 = this.end.y;
         int x1 = this.start.x;
         int x2 = this.end.x;
-        double k = (double) (y2 - y1) / (x2 - x1);
-        if(Double.isNaN(k)||Double.isInfinite(k)){
-            k = Integer.MAX_VALUE;
-        }
-        double q = y1 - k * x1;
+        int px = point.x;
+        int py = point.y;
 
-        return (int) ((k*point.x-point.y+q)/Math.sqrt(k*k+1));
+        double n = (y2 - y1) * px - (x2 - x1) * py + x2 * y1 - y2 * x1;
+        double d = Math.sqrt((y2 - y1)*(y2 - y1) + (x2 - x1)*(x2 - x1));
+
+        return (int) (n/d);
+    }
+
+    public int getSide(Point2D p) {
+
+        double x1 = start.x;
+        double y1 = start.y;
+        double x2 = end.x;
+        double y2 = end.y;
+
+        double px = p.x;
+        double py = p.y;
+
+        double value = (y2 - y1) * px - (x2 - x1) * py + x2 * y1 - y2 * x1;
+
+        if (Math.abs(value) < 1e-9)
+            return 0;
+
+        return (value > 0) ? 1 : -1;
     }
 
     public Double[] getNormal(){

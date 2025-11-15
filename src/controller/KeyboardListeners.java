@@ -37,6 +37,10 @@ public class KeyboardListeners implements KeyListener
             controller.bakePolygon();
             controller.render(controller.getPanel().getRaster());
         }
+        if(e.getKeyCode() == e.VK_ALT&& controller.polygonMode){
+            controller.bakeClipper();
+            controller.render(controller.getPanel().getRaster());
+        }
         if(e.getKeyCode() == e.VK_F){
             controller.addSeed(controller.mousePos);
             controller.render(controller.getPanel().getRaster());
