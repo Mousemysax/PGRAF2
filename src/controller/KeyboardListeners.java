@@ -29,8 +29,16 @@ public class KeyboardListeners implements KeyListener
             controller.polygonMode = !controller.polygonMode;
             System.out.println(controller.polygonMode);
         }
+        if(e.getKeyCode() == e.VK_O){
+            controller.rectMode = !controller.rectMode;
+            System.out.println(controller.rectMode);
+        }
         if(e.getKeyCode() == e.VK_ENTER&& controller.polygonMode){
             controller.bakePolygon();
+            controller.render(controller.getPanel().getRaster());
+        }
+        if(e.getKeyCode() == e.VK_ALT&& controller.polygonMode){
+            controller.bakeClipper();
             controller.render(controller.getPanel().getRaster());
         }
         if(e.getKeyCode() == e.VK_F){

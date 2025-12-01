@@ -6,7 +6,6 @@ import model.objectdata.Polygon;
 import model.rasterops.rasterizers.LineRasterizer;
 import model.rasterops.rasterizers.PolygonRasterizer;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,7 +29,7 @@ public class ScanLine implements Filler{
         for (int i = 0; i < polygon.size(); i++) {
             Line lajna = new Line(polygon.getItem(i),polygon.getItem((i + 1) % polygon.size()));
             if (!(lajna.start.y == lajna.end.y)){
-                edges.add(lajna.orientated().shortened());
+                edges.add(lajna.orientatedY().shortened());
             }
         }
         int yMin = Integer.MAX_VALUE;
@@ -61,10 +60,8 @@ public class ScanLine implements Filler{
 
         for (Line lajna : scanLines) {
             lr.drawLineColorLerp(lajna);
-            System.out.println(lajna.start.y+","+lajna.start.x + " " + lajna.end.y+","+lajna.end.x);
         }
 
         pr.rasterize(polygon);
-        System.out.println("penis");
     }
 }

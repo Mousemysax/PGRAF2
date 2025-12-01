@@ -27,7 +27,18 @@ public class DragListeners implements MouseMotionListener {
         if(controller.polygonMode){
             controller.polygon.getLast().x = e.getX();
             controller.polygon.getLast().y = e.getY();
-        }else {
+        }
+        else if(controller.rectMode){
+            if(controller.rectSecondStage){
+                controller.constructRect(controller.line,new Point2D(e.getX(),e.getY()));
+            }
+            else{
+                controller.line = new Line(controller.line.start, new Point2D(e.getX(), e.getY(), controller.line.end.getColor()));
+
+            }
+        }
+        else
+        {
             if (!controller.shiftMode) {
                 controller.line = new Line(controller.line.start, new Point2D(e.getX(), e.getY(), controller.line.end.getColor()));
             } else {

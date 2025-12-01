@@ -3,7 +3,9 @@ package controller;
 import model.objectdata.Line;
 import model.objectdata.Point2D;
 import model.objectdata.Polygon;
+import model.objectdata.Rectangle;
 import model.rasterdata.Raster;
+import model.rasterops.clip.SutherlandHodgeman;
 import model.rasterops.fill.Filler;
 import model.rasterops.fill.ScanLine;
 import model.rasterops.fill.SeedFill;
@@ -28,14 +30,19 @@ public class Controller2D implements Controller {
 
 
     public Polygon polygon;
+    public Polygon cliPolygon = new Polygon();
     public Line line;
     public boolean shiftMode = false;
     public boolean polygonMode = false;
+    public boolean rectMode = false;
+    public boolean rectSecondStage = false;
     public Point2D mousePos = new Point2D(0,0);
     private ArrayList<Line> lineList = new ArrayList<>();
     private ArrayList<Point2D> seedList = new ArrayList<>();
     private ArrayList<Polygon> polygonList = new ArrayList<>();
     private Random rand = new Random();
+    private SutherlandHodgeman clipSH = new SutherlandHodgeman();
+
 
     public Controller2D(Panel panel) {
         this.panel = panel;
@@ -78,10 +85,14 @@ public class Controller2D implements Controller {
         }
 
         for (Polygon poly : polygonList){
-            scanLine.scanLineFill(poly);
+            if (cliPolygon.size() != 0)
+                scanLine.scanLineFill(clipSH.clip(poly,cliPolygon));
+            else
+                scanLine.scanLineFill(poly);
         }
 
         pr.rasterize(polygon);
+        pr.rasterize(cliPolygon);
         lrt.drawLineColorLerp(line);
         for (Point2D seed : seedList){
             seedFiller.floodFill4(seed.x,seed.y,new Color(0x16161D),Color.cyan);
@@ -95,8 +106,17 @@ public class Controller2D implements Controller {
     }
 
     public void bakePolygon(){
+        if (!polygon.isCCW())
+            polygon.flip();
         polygon.setColor(new Color(rand.nextInt(255),rand.nextInt(255),rand.nextInt(255)));
         polygonList.add(polygon);
+        polygon = new Polygon();
+    }
+
+    public void bakeClipper(){
+        if (!polygon.isCCW())
+            polygon.flip();
+        cliPolygon = polygon;
         polygon = new Polygon();
     }
 
@@ -129,6 +149,8 @@ public class Controller2D implements Controller {
         lineList.clear();
         polygonList.clear();
         raster.clear();
+        cliPolygon.clear();
+        seedList.clear();
         render(raster);
     }
 
@@ -136,6 +158,9 @@ public class Controller2D implements Controller {
         seedList.add(seedPoint);
     }
 
+    public void constructRect(Line line, Point2D point){
+        polygon = new Rectangle(new ArrayList<Point2D>(),line,point);
+    }
     /**
      * Clears canvas and all the data structures
      */

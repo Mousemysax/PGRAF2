@@ -26,6 +26,14 @@ public class MouseListeners implements MouseListener {
             controller.polygon.addItem(new Point2D(e.getX(),e.getY()));
 
         }
+        else if(controller.rectMode){
+            if(controller.rectSecondStage){
+
+            }
+            else{
+                controller.line = new Line(new Point2D(e.getX(),e.getY(), Color.red),new Point2D(e.getX(),e.getY(),Color.red));
+            }
+        }
         else {
             controller.line = new Line(new Point2D(e.getX(),e.getY(), Color.blue),new Point2D(e.getX(),e.getY(),Color.magenta));
         }
@@ -37,11 +45,22 @@ public class MouseListeners implements MouseListener {
     public void mouseReleased(MouseEvent e) {
         if(controller.polygonMode){
 
+        }else if (controller.rectMode){
+            if(controller.rectSecondStage){
+                controller.bakePolygon();
+                controller.rectSecondStage = false;
+            }
+            else{
+                controller.rectSecondStage = true;
+            }
+
         }
         else
         {
             controller.bakeLine();
         }
+
+
     }
 
     @Override

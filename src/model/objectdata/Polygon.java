@@ -2,6 +2,7 @@ package model.objectdata;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class Polygon {
 
@@ -52,5 +53,16 @@ public class Polygon {
         vertices.getFirst();
     }
 
+    public void flip(){
+        Collections.reverse(vertices);
+    }
+
+    public boolean isCCW(){
+        int result = 0;
+        for (int i = 0; i < size(); i++) {
+            result += (getItem(i).x-getItem((size()+i+1)%size()).x)*((getItem(i).y+getItem((size()+i+1)%size()).y));
+        }
+        return result<0;
+    }
 
 }
