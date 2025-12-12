@@ -141,8 +141,8 @@ public class Line {
         normal[0] = (double) (y1-y2);
         normal[1] = (double) (x2-x1);
         float length = (float) Math.sqrt(normal[0]*normal[0]+normal[1]*normal[1]);
-        normal[0] /= -length;
-        normal[1] /= -length;
+        normal[0] /= length;
+        normal[1] /= length;
         return normal;
     }
 
