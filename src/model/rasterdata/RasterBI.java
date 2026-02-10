@@ -1,9 +1,11 @@
 package model.rasterdata;
 
+import transforms.Col;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
-public class RasterBI implements Raster {
+public class RasterBI implements Raster<Col> {
 
     private final BufferedImage img;
     private final Color backgroundColor = new Color(0x16161D);
@@ -35,13 +37,13 @@ public class RasterBI implements Raster {
     }
 
     @Override
-    public int getPixel(int x, int y) {
-        return img.getRGB(x,y);
+    public Col getValue(int x, int y) {
+        return new Col(img.getRGB(x,y));
     }
 
     @Override
-    public void setPixel(int x, int y, int color) {
-        img.setRGB(x,y,color);
+    public void setValue(int x, int y, Col color) {
+        img.setRGB(x,y,color.getRGB());
     }
 
     public BufferedImage getImg() {
