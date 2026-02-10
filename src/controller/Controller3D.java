@@ -3,6 +3,7 @@ package controller;
 import model.objectdata.model3D.*;
 import model.rasterdata.Raster;
 import model.rasterdata.RasterBI;
+import model.rasterdata.ZBuffer;
 import model.rasterops.rasterizers.LineRasterizerTrivial;
 import model.rasterops.renderer.Renderer3D;
 import transforms.*;
@@ -53,9 +54,12 @@ public class Controller3D implements Controller {
     private Camera view;
     private Mat4 proj;
 
+    private final ZBuffer zbuffer;
+
     public Controller3D(Panel panel) {
         this.panel = panel;
         this.raster = (RasterBI) panel.getRaster();
+        this.zbuffer = new ZBuffer(panel.getRaster());
 
         initObjects(raster);
         initListeners(panel);
