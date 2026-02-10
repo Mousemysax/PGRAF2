@@ -1,6 +1,7 @@
 package model.rasterdata;
 
 import java.awt.*;
+import java.util.Arrays;
 
 public class DepthBuffer implements Raster<Double> {
     private final double[][] buffer;
@@ -12,6 +13,8 @@ public class DepthBuffer implements Raster<Double> {
         this.width = width;
         this.height = height;
         this.buffer = new  double[height][width];
+        for (double[] row: buffer)
+            Arrays.fill(row, 1.0);
     }
 
     @Override

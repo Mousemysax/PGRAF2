@@ -49,7 +49,7 @@ public class LineRasterizerBresenham extends LineRasterizer {
         int y = y0;
 
         for (int x = x0; x < x1; x++) {
-            raster.setPixel(x, y, color.getRGB());
+            raster.setValue(x, y, color.getRGB());
             if (D > 0) {
                 y += yi;
                 D -= 2 * dx;
@@ -73,7 +73,7 @@ public class LineRasterizerBresenham extends LineRasterizer {
         int x = x0;
 
         for (int y = y0; y < y1; y++) {
-            raster.setPixel(x, y, color.getRGB());
+            raster.setValue(x, y, color.getRGB());
             if (D > 0) {
                 x+= xi;
                 D -= 2 * dy;

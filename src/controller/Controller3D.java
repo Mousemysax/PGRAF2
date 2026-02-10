@@ -9,13 +9,7 @@ import model.rasterops.renderer.Renderer3D;
 import transforms.*;
 import view.Panel;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -60,9 +54,9 @@ public class Controller3D implements Controller {
         this.panel = panel;
         this.raster = (RasterBI) panel.getRaster();
         this.zbuffer = new ZBuffer(panel.getRaster());
-
         initObjects(raster);
         initListeners(panel);
+
         renderScene();
 
     }
@@ -71,10 +65,8 @@ public class Controller3D implements Controller {
     public void initObjects(Raster raster) {
 //        view = new Camera(new Vec3D(-15, 0,0 ), 0 , 0, 5, true);
 //        proj = new Mat4PerspRH(Math.toRadians(90), (double) panel.getHeight() / panel.getWidth(), 0.1, 10000);
-//
-//        liner = new LineRasterizerTrivial(panel.getRaster());
+//        liner = new LineRasterizerTrivial(raster);
 //        renderer3D = new Renderer3D(liner, panel,this);
-//
 //        triangle = new Triangle();
 //        arrow = new Arrow();
 //        polygon3D = new Polygon3D(7);
@@ -215,6 +207,8 @@ public class Controller3D implements Controller {
 //        for (Mesh mesh : objects){
 //            renderer3D.render(mesh);
 //        }
+        zbuffer.setPixelZ(60,50,0.06,new Col(255,0,0));
+        zbuffer.setPixelZ(60,50,0.3,new Col(0,255,0));
         panel.repaint();
     }
 

@@ -32,7 +32,7 @@ public class LineRasterizerTrivial extends LineRasterizer {
             }
             for (int x = x1; x <= x2; x++) {
                 int y = (int) (k * x + q);
-                raster.setPixel(x, y, color.getRGB());
+                raster.setValue(x, y, color.getRGB());
             }
         }
         else {
@@ -43,7 +43,7 @@ public class LineRasterizerTrivial extends LineRasterizer {
             }
             for (int y = y1; y <= y2; y++) {
                 int x = (int) ((y - q)/k);
-                raster.setPixel(x, y, color.getRGB());
+                raster.setValue(x, y, color.getRGB());
             }
         }
 
@@ -93,7 +93,7 @@ public class LineRasterizerTrivial extends LineRasterizer {
                 }
                 for (int x = x1; x <= x2; x++) {
                     int y = (int) (k * x + q);
-                    raster.setPixel(x, y,Controller2D.colorLerp(start.getColor(),end.getColor(),((double) (x-x1) /Math.abs(x2-x1))).getRGB());
+                    raster.setValue(x, y,Controller2D.colorLerp(start.getColor(),end.getColor(),((double) (x-x1) / abs(x2-x1))).getRGB());
                 }
             }
             else {
@@ -107,7 +107,7 @@ public class LineRasterizerTrivial extends LineRasterizer {
                 }
                 for (int y = y1; y <= y2; y++) {
                     int x = (int) ((y - q)/k);
-                    raster.setPixel(x, y,Controller2D.colorLerp(start.getColor(),end.getColor(),((double) (y-y1) /Math.abs(y2-y1))).getRGB());
+                    raster.setValue(x, y,Controller2D.colorLerp(start.getColor(),end.getColor(),((double) (y-y1) / abs(y2-y1))).getRGB());
                 }
             }
         }

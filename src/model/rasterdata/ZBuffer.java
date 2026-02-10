@@ -15,7 +15,7 @@ public class ZBuffer {
         if(x <0 || y <0 || z <0 || x >= imageBuffer.getWidth() || y >= imageBuffer.getHeight()) {
             return;
         }
-        if(depthBuffer.getValue(x,y) < z){
+        if(depthBuffer.getValue(x,y) > z){
             imageBuffer.setValue(x,y,color);
             depthBuffer.setValue(x,y,z);
         }
