@@ -4,19 +4,33 @@ import transforms.Mat4;
 import transforms.Mat4Identity;
 import transforms.Point3D;
 
+import java.awt.*;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
-
-
 
 public class Mesh {
 
     protected ArrayList<Point3D> vertexBuffer = new ArrayList<>();
     protected ArrayList<Integer> indexBuffer = new ArrayList<>();
-    protected Mat4 mat4 = new Mat4Identity();
-    // color
-    // isSelected
+    private Mat4 model = new Mat4Identity();
+
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
+    }
+
+    private boolean isActive = false;
+
+    public void setColor(Color color) {
+        this.color = color;
+    }
+
+    protected Color color = Color.white;
+    public boolean isAnimated = false;
 
     protected void addIndices(Integer... indices) {
         indexBuffer.addAll(Arrays.asList(indices));
@@ -30,12 +44,24 @@ public class Mesh {
         return indexBuffer;
     }
 
-    public Mat4 getMat4() {
-        return mat4;
+    public Mat4 getModel() {
+        return model;
     }
 
-    public void setMat4(Mat4 mat4) {
-        this.mat4 = mat4;
+    public void setModel(Mat4 model) {
+        this.model = model;
     }
+    public Color getColor() {
+        if (isActive){
+            return Color.yellow;
+        }
+        else{
+            return color;
+        }
+    }
+
+
+
+
 }
 

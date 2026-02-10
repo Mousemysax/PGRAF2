@@ -34,6 +34,19 @@ public class SeedFill implements Filler {
         }
     }
 
+    public void  floodFill4Border(int x, int y, Color bordercolor, Color newColor) {
+        if(x>= 0 && y>= 0 && x < raster.getWidth() && y < raster.getHeight()) {
+            if(raster.getPixel(x, y) != bordercolor.getRGB()) {
+                raster.setPixel(x,y,newColor.getRGB());
+                floodFill4Border(x+1, y, bordercolor, newColor);
+                floodFill4Border(x-1, y, bordercolor, newColor);
+                floodFill4Border(x, y+1, bordercolor, newColor);
+                floodFill4Border(x, y-1, bordercolor, newColor);
+            }
+        }
+
+    }
+
     private void  floodFill8(int x, int y, Color oldColor, Color newColor) {
         if(x>= 0 && y>= 0 && x < raster.getWidth() && y < raster.getHeight()) {
             if(raster.getPixel(x, y) == oldColor.getRGB()) {

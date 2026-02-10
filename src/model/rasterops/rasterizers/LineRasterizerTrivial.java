@@ -52,6 +52,10 @@ public class LineRasterizerTrivial extends LineRasterizer {
 
     }
 
+   @Override
+   public void rasterize(Line line) {
+       drawLineColorLerp(line);
+   }
 
 
     //Trivialni algoritmus s linearni interpolaci barev
