@@ -5,6 +5,8 @@ import model.rasterdata.Raster;
 import model.rasterdata.RasterBI;
 import model.rasterdata.ZBuffer;
 import model.rasterops.rasterizers.LineRasterizerTrivial;
+import model.rasterops.rasterizers.TriangleRasterizer;
+import model.rasterops.rasterizers.TriangleRasterizerBasic;
 import model.rasterops.renderer.Renderer3D;
 import transforms.*;
 import view.Panel;
@@ -43,6 +45,9 @@ public class Controller3D implements Controller {
 
     private LineRasterizerTrivial liner;
     private Renderer3D renderer3D;
+    private TriangleRasterizer  triangleRasterizer;
+
+    private Vertex v1,v2,v3,v4,v5,v6;
 
 
     private Camera view;
@@ -54,6 +59,7 @@ public class Controller3D implements Controller {
         this.panel = panel;
         this.raster = (RasterBI) panel.getRaster();
         this.zbuffer = new ZBuffer(panel.getRaster());
+        this.triangleRasterizer = new TriangleRasterizerBasic(zbuffer);
         initObjects(raster);
         initListeners(panel);
 
@@ -63,6 +69,12 @@ public class Controller3D implements Controller {
 
     @Override
     public void initObjects(Raster raster) {
+        v1 = new Vertex(400.0,0,0.5,new Col(0,255,0));
+        v2 = new Vertex(0.0,300,0.5);
+        v3 = new Vertex(799.0,599,0.5);
+        v4 = new Vertex(100,0,0.3,new Col(255,0,0));
+        v5 = new Vertex(0.0,200,0.3);
+        v6 = new Vertex(799,500,0.6);
 //        view = new Camera(new Vec3D(-15, 0,0 ), 0 , 0, 5, true);
 //        proj = new Mat4PerspRH(Math.toRadians(90), (double) panel.getHeight() / panel.getWidth(), 0.1, 10000);
 //        liner = new LineRasterizerTrivial(raster);
@@ -207,8 +219,8 @@ public class Controller3D implements Controller {
 //        for (Mesh mesh : objects){
 //            renderer3D.render(mesh);
 //        }
-        zbuffer.setPixelZ(60,50,0.06,new Col(255,0,0));
-        zbuffer.setPixelZ(60,50,0.3,new Col(0,255,0));
+        triangleRasterizer.rasterize(v1, v2, v3);
+        triangleRasterizer.rasterize(v4, v5, v6);
         panel.repaint();
     }
 
