@@ -1,5 +1,6 @@
 package model.rasterops.rasterizers;
 
+import controller.shader.Shader;
 import model.objectdata.model3D.Triangle;
 import model.objectdata.model3D.Vertex;
 import util.Lerp;
@@ -16,7 +17,7 @@ public class TriangleRasterizerBasic extends TriangleRasterizer {
     }
 
     @Override
-    public void rasterize(Vertex a, Vertex b, Vertex c) {
+    public void rasterize(Vertex a, Vertex b, Vertex c, Shader shader) {
         Vertex temp;
         if (a.getY() > b.getY()) {
             temp = a;
@@ -55,7 +56,7 @@ public class TriangleRasterizerBasic extends TriangleRasterizer {
             for (int x = (int) ab.getX(); x < ac.getX(); x++) {
                 double t = (x - ab.getX()) / (ac.getX() - ab.getX());
                 Vertex pixel = lerp.lerp(ab, ac, t);
-                zBuffer.setPixelZ(x,y, pixel.getZ(), a.getColor());
+                zBuffer.setPixelZ(x,y, pixel.getZ(), shader.getColor(pixel));
             }
         }
         for (int y = by; y < cy; y++) {
@@ -73,7 +74,9 @@ public class TriangleRasterizerBasic extends TriangleRasterizer {
             for (int x = (int) bc.getX(); x < ac.getX(); x++) {
                 double t = (x - bc.getX()) / (ac.getX() - bc.getX());
                 Vertex pixel = lerp.lerp(bc, ac, t);
-                zBuffer.setPixelZ(x,y, pixel.getZ(), a.getColor());
+
+                //System.out.println(shader.getClass());
+                zBuffer.setPixelZ(x,y, pixel.getZ(), shader.getColor(pixel));
             }
         }
 

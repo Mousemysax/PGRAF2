@@ -1,6 +1,7 @@
 package model.solid;
 
 
+import controller.shader.Shader;
 import model.objectdata.model3D.Part;
 import model.objectdata.model3D.Vertex;
 
@@ -12,6 +13,16 @@ public abstract class Solid {
     protected final List<Vertex> vertexBuffer = new ArrayList<>();
     protected final List<Integer> indexBuffer = new ArrayList<>();
     protected final List<Part> partBuffer = new ArrayList<>();
+
+    public Shader getShader() {
+        return shader;
+    }
+
+    public void setShader(Shader shader) {
+        this.shader = shader;
+    }
+
+    protected Shader shader;
 
     public List<Vertex> getVertexBuffer() {
         return vertexBuffer;

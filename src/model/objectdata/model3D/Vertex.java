@@ -2,26 +2,42 @@ package model.objectdata.model3D;
 
 import transforms.Col;
 import transforms.Point3D;
+import transforms.Vec2D;
 
 
 public class Vertex implements Vectorizable<Vertex> {
-    private Point3D position;
-    private Col color;
+    private final Point3D position;
+    private final Col color;
+
+    public Vec2D getUv() {
+        return uv;
+    }
+
+    private final Vec2D uv;
 
 
-    public Vertex(Point3D position, Col color) {
+    public Vertex(Point3D position, Col color, Vec2D uv) {
         this.position = position;
         this.color = color;
+        this.uv = uv;
     }
     public Vertex(Point3D position) {
         this.position = position;
+        this.uv = new Vec2D(0, 0);
         this.color = new Col(255,255,255);
     }
-    public Vertex(double x, double y, double z) {
+    public Vertex(double x, double y, double z, Vec2D uv) {
+        this.uv = uv;
         this.position = new Point3D(x, y, z);
         this.color = new Col(255,255,255);
     }
-    public Vertex(double x, double y, double z,Col color) {
+    public Vertex(double x, double y, double z) {
+        this.uv = new  Vec2D(0, 0);
+        this.position = new Point3D(x, y, z);
+        this.color = new Col(255,255,255);
+    }
+    public Vertex(double x, double y, double z, Col color, Vec2D uv) {
+        this.uv = uv;
         this.position = new Point3D(x, y, z);
         this.color = color;
 
@@ -51,12 +67,12 @@ public class Vertex implements Vectorizable<Vertex> {
 
     @Override
     public Vertex mul(double d) {
-        return new Vertex(this.position.mul(d), this.color.mul(d));
+        return new Vertex(this.position.mul(d), this.color.mul(d),this.uv.mul(d));
     }
 
     @Override
     public Vertex add(Vertex v) {
-        return new Vertex(this.position.add(v.getPosition()), this.color.add(v.getColor()));
+        return new Vertex(this.position.add(v.getPosition()), this.color.add(v.getColor()),this.uv.add(v.getUv()));
     }
 
     public Vertex lerp(Vertex v1, Vertex v2,double t) {

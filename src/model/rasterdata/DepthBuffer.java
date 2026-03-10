@@ -19,7 +19,8 @@ public class DepthBuffer implements Raster<Double> {
 
     @Override
     public void clear() {
-
+        for (double[] row: buffer)
+            Arrays.fill(row, 1.0);
     }
 
     @Override

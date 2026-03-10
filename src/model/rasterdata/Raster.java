@@ -9,10 +9,6 @@ public interface Raster<T> {
      */
     void clear();
 
-    /**
-     * Metoda pre preklesenie platna
-     * @param g
-     */
     void repaint(Graphics g);
 
     /**
@@ -21,10 +17,7 @@ public interface Raster<T> {
      */
     int getWidth();
 
-    /**
-     * Vrati pocet riadkov v rastri
-     * @return pocet riakdov
-     */
+
     int getHeight();
 
 

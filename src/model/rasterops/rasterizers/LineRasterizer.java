@@ -1,44 +1,28 @@
 package model.rasterops.rasterizers;
 
-import model.objectdata.Line;
-import model.rasterdata.Raster;
 
-import java.awt.*;
+import model.objectdata.model3D.Line;
+import model.rasterdata.RasterBI;
+import transforms.Col;
 
 public abstract class LineRasterizer {
+    protected RasterBI raster;
+    protected Col color;
 
-    Raster raster;
-    Color color = Color.blue;
-
-    public LineRasterizer(Raster raster){
+    public LineRasterizer(RasterBI raster) {
         this.raster = raster;
+        this.color = new Col(0xffffff);
+    }
+
+    public void rasterize(int x1, int y1, int x2, int y2) {
+
     }
 
     public void rasterize(Line line) {
-        drawLine(line.getStart().x, line.getStart().y, line.getEnd().x, line.getEnd().y);
+        rasterize(line.getX1(), line.getY1(), line.getX2(), line.getY2());
     }
 
-    public void rasterize(int x1, int y1, int x2, int y2, Color color) {
-        drawLine(x1, y1, x2, y2);
-    }
-
-    protected void drawLine(int x1, int y1, int x2, int y2) {
-
-    }
-
-    public void drawLine(Line line) {
-    }
-
-    public void drawLineColorLerp(Line line){
-
-    }
-
-    public void setColor(Color color) {
+    public void setColor(Col color) {
         this.color = color;
     }
-
-    public void setColor(int color) {
-        this.color = new Color(color);
-    }
-
 }
