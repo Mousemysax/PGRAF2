@@ -2,9 +2,8 @@ package model.rasterops.rasterizers;
 
 import model.objectdata.model3D.Triangle;
 import model.objectdata.model3D.Vertex;
+import util.Lerp;
 import model.rasterdata.ZBuffer;
-import transforms.Col;
-import transforms.Point3D;
 
 public class TriangleRasterizerBasic extends TriangleRasterizer {
     public TriangleRasterizerBasic(ZBuffer zBuffer) {
@@ -35,53 +34,46 @@ public class TriangleRasterizerBasic extends TriangleRasterizer {
             b = temp;
         }
 
-        int ax = (int)Math.round(a.getX());
+        Lerp<Vertex> lerp = new Lerp<>();
+
         int ay = (int)Math.round(a.getY());
-        double az = a.getZ();
-        int bx = (int)Math.round(b.getX());
         int by = (int)Math.round(b.getY());
-        double bz = b.getZ();
-        int cx = (int)Math.round(c.getX());
         int cy = (int)Math.round(c.getY());
-        double cz = c.getZ();
 
         for (int y = ay; y < by; y++) {
             double tAB = (double) (y - ay) /(by-ay);
-            int xAB = (int)Math.round((1-tAB)*ax+tAB*bx);
-            double zAB = (1-tAB)*az+tAB*bz;
+            Vertex ab = lerp.lerp(a, b, tAB);
             double tAC = (double) (y - ay) /(cy-ay);
-            int xAC = (int)Math.round((1-tAC)*ax+tAC*cx);
-            double zAC = (1-tAC)*az+tAC*cz;
+            Vertex ac = lerp.lerp(a, c, tAC);
 
-            if (xAB > xAC){
-                int tempX = xAB;
-                xAB = xAC;
-                xAC = tempX;
+            if (ab.getX() > ac.getX()){
+                Vertex tempX = ab;
+                ab = ac;
+                ac = tempX;
             }
 
-            for (int x = xAB; x < xAC; x++) {
-                double tX = (double) (x - xAB) /(xAC-xAB);
-                double zX = (1-tX)*zAB+tX*zAC;
-                zBuffer.setPixelZ(x,y,zX,a.getColor());
+            for (int x = (int) ab.getX(); x < ac.getX(); x++) {
+                double t = (x - ab.getX()) / (ac.getX() - ab.getX());
+                Vertex pixel = lerp.lerp(ab, ac, t);
+                zBuffer.setPixelZ(x,y, pixel.getZ(), a.getColor());
             }
         }
         for (int y = by; y < cy; y++) {
             double tBC = (double) (y - by) /(cy-by);
-            int xBC = (int)Math.round((1-tBC)*bx+tBC*cx);
-            double zBC = (1-tBC)*bz+tBC*cz;
+            Vertex bc = lerp.lerp(b, c, tBC);
             double tAC = (double) (y - ay) /(cy-ay);
-            int xAC = (int)Math.round((1-tAC)*ax+tAC*cx);
-            double zAC = (1-tAC)*az+tAC*cz;
-            if (xBC > xAC){
-                int tempX = xBC;
-                xBC = xAC;
-                xAC = tempX;
+            Vertex ac = lerp.lerp(a, c, tAC);
+
+            if (bc.getX() > ac.getX()){
+                Vertex tempX = bc;
+                bc = ac;
+                ac = tempX;
             }
 
-            for (int x = xBC; x < xAC; x++) {
-                double tX = (double) (x - xBC) /(xAC-xBC);
-                double zX = (1-tX)*zBC+tX*zAC;
-                zBuffer.setPixelZ(x,y,zX,a.getColor());
+            for (int x = (int) bc.getX(); x < ac.getX(); x++) {
+                double t = (x - bc.getX()) / (ac.getX() - bc.getX());
+                Vertex pixel = lerp.lerp(bc, ac, t);
+                zBuffer.setPixelZ(x,y, pixel.getZ(), a.getColor());
             }
         }
 
