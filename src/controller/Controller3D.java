@@ -13,6 +13,8 @@ import model.rasterops.rasterizers.TriangleRasterizer;
 import model.rasterops.rasterizers.TriangleRasterizerBasic;
 import model.rasterops.renderer.RendererSolid;
 import model.solid.Arrow;
+import model.solid.Quad;
+import model.solid.Solid;
 import transforms.*;
 import view.Panel;
 
@@ -21,9 +23,6 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 public class Controller3D implements Controller {
 
@@ -43,7 +42,7 @@ public class Controller3D implements Controller {
     private BufferedImage houseTexture;
 
     private final ZBuffer zbuffer;
-    Arrow arrow;
+    Solid solid;
 
     public Controller3D(Panel panel) {
         this.panel = panel;
@@ -77,8 +76,8 @@ public class Controller3D implements Controller {
 
 
 
-        arrow = new Arrow();
-        arrow.setShader(new LerpColorShader());
+        solid = new Quad("peanits");
+        solid.setShader(new LerpColorShader());
 
 
     }
@@ -88,10 +87,10 @@ public class Controller3D implements Controller {
         panel.addKeyListener(new  KeyAdapter() {
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-                    arrow.setShader(new LerpColorShader());
+                    solid.setShader(new LerpColorShader());
                 }
                 if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-                    arrow.setShader(new ConstColorShader());
+                    solid.setShader(new ConstColorShader());
                 }
                 if (e.getKeyCode() == KeyEvent.VK_UP) {
                     Shader textShader = new Shader() {
@@ -108,7 +107,7 @@ public class Controller3D implements Controller {
                             return new Col(houseTexture.getRGB((int) (u*(houseTexture.getWidth()-1)), (int) (v*(houseTexture.getHeight()-1))));
                         }
                     };
-                    arrow.setShader(textShader);
+                    solid.setShader(textShader);
                 }
 
                 renderScene();
@@ -122,7 +121,7 @@ public class Controller3D implements Controller {
     public void renderScene() {
         panel.clear();
         zbuffer.clear();
-        renderer.render(arrow);
+        renderer.render(solid);
         panel.repaint();
     }
 

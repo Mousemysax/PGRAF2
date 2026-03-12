@@ -10,6 +10,7 @@ import model.objectdata.model3D.Vertex;
 import model.rasterops.rasterizers.LineRasterizer;
 import model.rasterops.rasterizers.TriangleRasterizer;
 import model.solid.Solid;
+import util.Lerp;
 
 public class RendererSolid {
     private LineRasterizer lineRasterizer;
@@ -21,6 +22,7 @@ public class RendererSolid {
     }
 
     public void render(Solid solid) {
+        Lerp<Vertex> lerp = new Lerp<>();
         for (Part part : solid.getPartBuffer()) {
             switch (part.getType()) {
                 case POINTS:
@@ -70,16 +72,41 @@ public class RendererSolid {
 
                         double zMin = 0;
 
+                        Vertex temp;
+                        if (a.getZ() < b.getZ()) {
+                            temp = a;
+                            a = b;
+                            b = temp;
+                        }
+                        if(a.getZ() < c.getZ()) {
+                            temp = a;
+                            a = c;
+                            c = temp;
+                        }
+                        if(b.getZ() < c.getZ()) {
+                            temp = c;
+                            c = b;
+                            b = temp;
+                        }
+
                         if (a.getZ() < zMin){
+
+                            System.out.println("peanits A");
                             continue;
                         }
                         if (b.getZ() < zMin){
-                            Double tAB = (a.getZ() - zMin);
-                            //renderTriangle(a, vAB,vAC);
+                            double tAB = (a.getZ() - zMin)/(a.getZ()-b.getZ());
+                            Vertex vAB = lerp.lerp(a,b,tAB);
+                            double tAC = (a.getZ() - zMin)/(a.getZ()-c.getZ());
+                            Vertex vAC = lerp.lerp(a,b,tAC);
+                            renderTriangle(a, vAB,vAC, solid.getShader());
+                            System.out.println("peanits B");
                             continue;
                         }
 
                         if (c.getZ() < zMin){
+
+                            System.out.println("peanits C");
                             //renderTriangle(a, b, vBC);
                             //renderTriangle(a, vBC,vAC);
                             continue;
