@@ -8,7 +8,7 @@ import model.rasterdata.Raster;
 import model.rasterdata.RasterBI;
 import model.rasterdata.ZBuffer;
 import model.rasterops.rasterizers.LineRasterizer;
-import model.rasterops.rasterizers.LineRasterizerGraphics;
+import model.rasterops.rasterizers.LineRasterizerBasic;
 import model.rasterops.rasterizers.TriangleRasterizer;
 import model.rasterops.rasterizers.TriangleRasterizerBasic;
 import model.rasterops.renderer.RendererSolid;
@@ -41,6 +41,10 @@ public class Controller3D implements Controller {
 
     private BufferedImage houseTexture;
 
+    private Solid axisZ = new Arrow();
+    private Solid axisY = new Arrow();
+    private Solid axisX = new Arrow();
+
     private final ZBuffer zbuffer;
     private boolean translMode = false;
 
@@ -51,7 +55,7 @@ public class Controller3D implements Controller {
         this.panel = panel;
         this.raster = (RasterBI) panel.getRaster();
         this.zbuffer = new ZBuffer(panel.getRaster());
-        this.lineRasterizer = new LineRasterizerGraphics(raster);
+        this.lineRasterizer = new LineRasterizerBasic(zbuffer);
         this.triangleRasterizer = new TriangleRasterizerBasic(zbuffer);
         this.scene = new Scene(
                 new ArrayList<Solid>(),
@@ -82,9 +86,16 @@ public class Controller3D implements Controller {
 //        v4 = new Vertex(400,400,0.3,new Col(255,0,0));
 //        v5 = new Vertex(600,300,0.3);
 
+        axisX.setShader(new ConstColorShader(new Col(0xff0000)));
+        axisY.setShader(new ConstColorShader(new Col(0x00ff00)));
+        axisZ.setShader(new ConstColorShader(new Col(0x0000ff)));
+        axisZ.setModel(axisZ.getModel().mul(new Mat4RotY(-Math.PI/2)));
+        axisY.setModel(axisY.getModel().mul(new Mat4RotZ(Math.PI/2)));
+        axisX.setModel(axisX.getModel().mul(new Mat4Scale(10)));
+        axisY.setModel(axisY.getModel().mul(new Mat4Scale(10)));
+        axisZ.setModel(axisZ.getModel().mul(new Mat4Scale(10)));
 
-
-        solid = new Quad();
+        solid = new Cube();
         solid.setShader(new LerpColorShader());
 //        solid.setModel(solid.getModel().mul(new Mat4Scale(1000000000)));
         solid.setModel(solid.getModel().mul(new Mat4Scale(1)));
@@ -133,7 +144,14 @@ public class Controller3D implements Controller {
                             }
                             col = new Col(houseTexture.getRGB((int) (u*(houseTexture.getWidth()-1)), (int) (v*(houseTexture.getHeight()-1))));
                             col = col.mul(scene.getAmbientLight());
-
+                            //Vec3D dirToLight = scene.getLightSource().getPostition().dehomog().orElse(new Vec3D(1,0,0)).add(vert.getPosition().dehomog().orElse(new Vec3D(0,0,0).opposite())).normalized().orElse(new Vec3D(1,0,0));
+                            Vec3D dirToLight = new Vec3D(0,1,1);
+                            col = col.add(scene.getLightSource().getLightColor().mul(Math.max(vert.getNormal().dot(dirToLight),0)));
+//                            System.out.println("normal");
+//                            System.out.println(vert.getPosition());
+//                            System.out.println(scene.getLightSource().getPostition());
+//                            System.out.println(dirToLight);
+//                            System.out.println(vert.getNormal().dot(dirToLight));
                             return col;
                         }
                     };
@@ -200,6 +218,9 @@ public class Controller3D implements Controller {
                 if (e.getKeyCode() == KeyEvent.VK_DOWN) {
                     scene.getSolids().get(scene.selected).setShader(new LerpColorShader());
                 }
+                if (e.getKeyCode() == KeyEvent.VK_P){
+                    scene.persp = !scene.persp;
+                }
 
                 renderScene();
             }
@@ -224,8 +245,9 @@ public class Controller3D implements Controller {
         for (Solid solid1 : scene.getSolids()){
             renderer.render(solid1);
         }
-        //renderer.render(scene.getLightSource().getSolid());
-        System.out.println(scene.getView().getViewVector());
+        renderer.render(axisX);
+        renderer.render(axisY);
+        renderer.render(axisZ);
 
         panel.repaint();
     }

@@ -1,28 +1,22 @@
 package model.rasterops.rasterizers;
 
 
+import controller.shader.Shader;
 import model.objectdata.model3D.Line;
+import model.objectdata.model3D.Vertex;
 import model.rasterdata.RasterBI;
+import model.rasterdata.ZBuffer;
 import transforms.Col;
 
 public abstract class LineRasterizer {
-    protected RasterBI raster;
-    protected Col color;
+    protected ZBuffer zBuffer;
 
-    public LineRasterizer(RasterBI raster) {
-        this.raster = raster;
-        this.color = new Col(0xffffff);
+    public LineRasterizer(ZBuffer zbuffer) {
+        this.zBuffer = zbuffer;
     }
 
-    public void rasterize(int x1, int y1, int x2, int y2) {
+    public void rasterize(Vertex a, Vertex b, Shader shader){
 
     }
 
-    public void rasterize(Line line) {
-        rasterize(line.getX1(), line.getY1(), line.getX2(), line.getY2());
-    }
-
-    public void setColor(Col color) {
-        this.color = color;
-    }
 }

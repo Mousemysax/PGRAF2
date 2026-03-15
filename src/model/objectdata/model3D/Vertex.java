@@ -9,6 +9,8 @@ public class Vertex implements Vectorizable<Vertex> {
     private Point3D position;
     private final Col color;
     private final Vec3D normal;
+    private Vec3D dirToLight = new Vec3D(0,0,1);
+
 
     public Vec2D getUv() {
         return uv;
@@ -35,13 +37,21 @@ public class Vertex implements Vectorizable<Vertex> {
         this.position = new Point3D(x, y, z);
         this.color = new Col(255,255,255);
     }
+    public Vertex(Point3D position,Col col,Vec3D normal, Vec2D uv, Vec3D dirToLight) {
+        this.normal = normal;
+        this.color = col;
+        this.uv = uv;
+        this.position = position;
+        this.dirToLight = dirToLight;
+    }
     public Vertex(double x, double y, double z) {
         this.normal = new Vec3D(0,0,0);
         this.uv = new  Vec2D(0, 0);
         this.position = new Point3D(x, y, z);
         this.color = new Col(255,255,255);
+
     }
-    public Vertex(double x, double y, double z, Col color, Vec3D normal, Vec2D uv) {
+    public Vertex(double x, double y, double z, Col color, Vec3D normal, Vec2D uv ){
         this.normal = normal;
         this.uv = uv;
         this.position = new Point3D(x, y, z);
@@ -53,6 +63,14 @@ public class Vertex implements Vectorizable<Vertex> {
 
     public Point3D getPosition() {
         return position;
+    }
+
+    public Vec3D getDirToLight() {
+        return dirToLight;
+    }
+
+    public void setDirToLight(Vec3D dirToLight) {
+        this.dirToLight = dirToLight;
     }
 
     public void setPosition(Point3D position) {
@@ -81,7 +99,7 @@ public class Vertex implements Vectorizable<Vertex> {
 
     @Override
     public Vertex mul(double d) {
-        return new Vertex(this.position.mul(d), this.color.mul(d),this.normal.mul(d) , this.uv.mul(d));
+        return new Vertex(this.position.mul(d), this.color.mul(d),this.normal.mul(d) ,this.uv.mul(d),getDirToLight().mul(d));
     }
 
 
@@ -91,7 +109,7 @@ public class Vertex implements Vectorizable<Vertex> {
 
     @Override
     public Vertex add(Vertex v) {
-        return new Vertex(this.position.add(v.getPosition()), this.color.add(v.getColor()), this.normal.add(v.getNormal()), this.uv.add(v.getUv()));
+        return new Vertex(this.position.add(v.getPosition()), this.color.add(v.getColor()), this.normal.add(v.getNormal()), this.uv.add(v.getUv()),getDirToLight().add(v.getDirToLight()));
     }
 
 

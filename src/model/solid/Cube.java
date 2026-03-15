@@ -10,27 +10,50 @@ import transforms.Vec3D;
 public class Cube extends Solid {
 
     public Cube() {
-        vertexBuffer.add(new Vertex(-1, -1, -1, new Col(0xffffff),new Vec3D(0,0,1),new Vec2D(0, 0))); // v0
-        vertexBuffer.add(new Vertex(-1, 1, -1, new Col(0x0000ff),new Vec3D(0,0,1),new Vec2D(0, 1))); // v1
-        vertexBuffer.add(new Vertex(1, 1, -1, new Col(0xff0000),new Vec3D(0,0,1),new Vec2D(1, 1))); // v2
-        vertexBuffer.add(new Vertex(1, -1, -1, new Col(0x00ff00),new Vec3D(0,0,1),new Vec2D(1, 0))); // v3
-        vertexBuffer.add(new Vertex(-1, -1, 1, new Col(0xffffff),new Vec3D(0,0,1),new Vec2D(0, 0))); // v0
-        vertexBuffer.add(new Vertex(-1, 1, 1, new Col(0x0000ff),new Vec3D(0,0,1),new Vec2D(0, 1))); // v1
-        vertexBuffer.add(new Vertex(1, 1, 1, new Col(0xff0000),new Vec3D(0,0,1),new Vec2D(1, 1))); // v2
-        vertexBuffer.add(new Vertex(1, -1, 1, new Col(0x00ff00),new Vec3D(0,0,1),new Vec2D(1, 0))); // v3
+        vertexBuffer.add(new Vertex(-1,-1, 1,new Col(0xffffff), new Vec3D(0,0,1), new Vec2D(0,0)));
+        vertexBuffer.add(new Vertex(-1, 1, 1,new Col(0xffffff), new Vec3D(0,0,1), new Vec2D(0,1)));
+        vertexBuffer.add(new Vertex( 1, 1, 1,new Col(0xffffff), new Vec3D(0,0,1), new Vec2D(1,1)));
+        vertexBuffer.add(new Vertex( 1,-1, 1,new Col(0xffffff), new Vec3D(0,0,1), new Vec2D(1,0)));
 
-        addIndices(0, 1, 2); // triangles
-        addIndices(0, 2, 3);
-        addIndices(1,5,6);
-        addIndices(1,6,2);
-        addIndices(0,1,5);
-        addIndices(0,5,4);
-        addIndices(0,3,4);
-        addIndices(3,7,4);
-        addIndices(5,4,7);
-        addIndices(5,7,6);
-        addIndices(3,2,6);
-        addIndices(3,6,7);
+        addIndices(0,1,2);
+        addIndices(0,2,3);
+        vertexBuffer.add(new Vertex( 1,-1,-1,new Col(0xffffff), new Vec3D(0,0,-1), new Vec2D(0,0)));
+        vertexBuffer.add(new Vertex( 1, 1,-1,new Col(0xffffff), new Vec3D(0,0,-1), new Vec2D(0,1)));
+        vertexBuffer.add(new Vertex(-1, 1,-1,new Col(0xffffff), new Vec3D(0,0,-1), new Vec2D(1,1)));
+        vertexBuffer.add(new Vertex(-1,-1,-1,new Col(0xffffff), new Vec3D(0,0,-1), new Vec2D(1,0)));
+
+        addIndices(4,5,6);
+        addIndices(4,6,7);
+        vertexBuffer.add(new Vertex(-1,-1,-1,new Col(0xffffff), new Vec3D(-1,0,0), new Vec2D(0,0)));
+        vertexBuffer.add(new Vertex(-1, 1,-1,new Col(0xffffff), new Vec3D(-1,0,0), new Vec2D(0,1)));
+        vertexBuffer.add(new Vertex(-1, 1, 1,new Col(0xffffff), new Vec3D(-1,0,0), new Vec2D(1,1)));
+        vertexBuffer.add(new Vertex(-1,-1, 1,new Col(0xffffff), new Vec3D(-1,0,0), new Vec2D(1,0)));
+
+        addIndices(8,9,10);
+        addIndices(8,10,11);
+        vertexBuffer.add(new Vertex(1,-1, 1,new Col(0xffffff), new Vec3D(1,0,0), new Vec2D(0,0)));
+        vertexBuffer.add(new Vertex(1, 1, 1,new Col(0xffffff), new Vec3D(1,0,0), new Vec2D(0,1)));
+        vertexBuffer.add(new Vertex(1, 1,-1,new Col(0xffffff), new Vec3D(1,0,0), new Vec2D(1,1)));
+        vertexBuffer.add(new Vertex(1,-1,-1,new Col(0xffffff), new Vec3D(1,0,0), new Vec2D(1,0)));
+
+        addIndices(12,13,14);
+        addIndices(12,14,15);
+
+        vertexBuffer.add(new Vertex(-1,1, 1,new Col(0xffffff), new Vec3D(0,1,0), new Vec2D(0,0)));
+        vertexBuffer.add(new Vertex(-1,1,-1,new Col(0xffffff), new Vec3D(0,1,0), new Vec2D(0,1)));
+        vertexBuffer.add(new Vertex( 1,1,-1,new Col(0xffffff), new Vec3D(0,1,0), new Vec2D(1,1)));
+        vertexBuffer.add(new Vertex( 1,1, 1,new Col(0xffffff), new Vec3D(0,1,0), new Vec2D(1,0)));
+
+        addIndices(16,17,18);
+        addIndices(16,18,19);
+
+        vertexBuffer.add(new Vertex(-1,-1,-1,new Col(0xffffff), new Vec3D(0,-1,0), new Vec2D(0,0)));
+        vertexBuffer.add(new Vertex(-1,-1, 1,new Col(0xffffff), new Vec3D(0,-1,0), new Vec2D(0,1)));
+        vertexBuffer.add(new Vertex( 1,-1, 1,new Col(0xffffff), new Vec3D(0,-1,0), new Vec2D(1,1)));
+        vertexBuffer.add(new Vertex( 1,-1,-1,new Col(0xffffff), new Vec3D(0,-1,0), new Vec2D(1,0)));
+
+        addIndices(20,21,22);
+        addIndices(20,22,23);
 
         partBuffer.add(new Part(TopologyType.TRIANGLES, 0, 12));
     }

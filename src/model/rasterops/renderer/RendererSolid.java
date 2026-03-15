@@ -38,25 +38,36 @@ public class RendererSolid {
                         int indexA = solid.getIndexBuffer().get(index++);
                         int indexB = solid.getIndexBuffer().get(index++);
 
-                        Vertex a = solid.getVertexBuffer().get(indexA);
-                        Vertex b = solid.getVertexBuffer().get(indexB);
+                        Vertex a = solid.getVertexBuffer().get(indexA).mul(mvp);
+                        Vertex b = solid.getVertexBuffer().get(indexB).mul(mvp);
 
-                        // TODO: vrcholy pronásobím MVP
+                        double zMin = 0;
 
-                        // TODO: ořezání
+                        Vertex temp;
+                        if (a.getZ() < b.getZ()) {
+                            temp = a;
+                            a = b;
+                            b = temp;
+                        }
 
+                        if(!isInView(a)&&!isInView(b)){
 
-                        // TODO: dehomog
+                            System.out.println(a.getPosition());
+                            continue;
+                        }
 
-                        // TODO: transformace do okna
+                        if (a.getZ() < zMin){
 
-                        // Rasterizace
-                        lineRasterizer.rasterize(
-                                (int) Math.round(a.getX()),
-                                (int) Math.round(a.getY()),
-                                (int) Math.round(b.getX()),
-                                (int) Math.round(b.getY())
-                        );
+                            continue;
+                        }
+                        else {
+                            a = a.dehomogenized();
+                            b = b.dehomogenized();
+                            transformToWindow(a);
+                            transformToWindow(b);
+                            lineRasterizer.rasterize(a,b,solid.getShader());
+                        }
+
                     }
                     break;
                 case TRIANGLES:
