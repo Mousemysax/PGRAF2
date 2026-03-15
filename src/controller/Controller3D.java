@@ -12,10 +12,7 @@ import model.rasterops.rasterizers.LineRasterizerGraphics;
 import model.rasterops.rasterizers.TriangleRasterizer;
 import model.rasterops.rasterizers.TriangleRasterizerBasic;
 import model.rasterops.renderer.RendererSolid;
-import model.solid.Arrow;
-import model.solid.Cube;
-import model.solid.Quad;
-import model.solid.Solid;
+import model.solid.*;
 import transforms.*;
 import view.Panel;
 
@@ -45,6 +42,7 @@ public class Controller3D implements Controller {
     private BufferedImage houseTexture;
 
     private final ZBuffer zbuffer;
+    private boolean translMode = false;
 
     private final Scene scene;
     Solid solid;
@@ -55,13 +53,17 @@ public class Controller3D implements Controller {
         this.zbuffer = new ZBuffer(panel.getRaster());
         this.lineRasterizer = new LineRasterizerGraphics(raster);
         this.triangleRasterizer = new TriangleRasterizerBasic(zbuffer);
-        this.scene = new Scene(new ArrayList<Solid>(),new Camera(new Vec3D(0, 0,0 ), 0 , -Math.PI/2, 5, true),new Mat4PerspRH(Math.PI/2, (double) panel.getWidth() /panel.getHeight(),0,10000),panel);
+        this.scene = new Scene(
+                new ArrayList<Solid>(),
+                new Camera(new Vec3D(0, 0,0 ), 0 , 0, 5, true),
+                new Mat4PerspRH(Math.PI/2, (double) panel.getHeight() /panel.getWidth(),0.1,10000),
+                new LightSource(new Sphere(20),new Col(0xff0000)),
+                panel);
         this.renderer = new RendererSolid(lineRasterizer,triangleRasterizer,scene);
         initObjects(raster);
         initListeners(panel);
 
         try {
-
             houseTexture = ImageIO.read(new File("res/textures/house.jpg"));
         }
         catch (Exception e) {
@@ -82,14 +84,18 @@ public class Controller3D implements Controller {
 
 
 
-        solid = new Cube();
+        solid = new Quad();
         solid.setShader(new LerpColorShader());
 //        solid.setModel(solid.getModel().mul(new Mat4Scale(1000000000)));
-//        solid.setModel(solid.getModel().mul(new Mat4Scale(1000000000)));
-        solid.setModel(solid.getModel().mul(new Mat4Rot(Math.PI/4,new Vec3D(0,1,0))));
-        solid.setModel(solid.getModel().mul(new Mat4Transl(10,0,0)));
+        solid.setModel(solid.getModel().mul(new Mat4Scale(1)));
+        solid.setModel(solid.getModel().mul(new Mat4Transl(5,0,0)));
         scene.addSolid(solid);
 
+        solid = new Sphere(20);
+        solid.setShader(new LerpColorShader());
+        solid.setModel(solid.getModel().mul(new Mat4Scale(2)));
+        solid.setModel(solid.getModel().mul(new Mat4Transl(10,5,0)));
+        scene.addSolid(solid);
 
 
     }
@@ -99,15 +105,18 @@ public class Controller3D implements Controller {
         panel.addKeyListener(new  KeyAdapter() {
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-                    solid.setShader(new LerpColorShader());
+                    scene.selected = (scene.selected+scene.getSolids().size()-1)%(scene.getSolids().size());
+                    System.out.println(scene.selected);
                 }
                 if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-                    solid.setShader(new ConstColorShader());
+                    scene.selected = (scene.selected+scene.getSolids().size()+1)%(scene.getSolids().size());
+                    System.out.println(scene.selected);
                 }
                 if (e.getKeyCode() == KeyEvent.VK_UP) {
                     Shader textShader = new Shader() {
                         @Override
                         public Col getColor(Vertex vert) {
+                            Col col;
                             double u = vert.getUv().getX();
                             double v =  vert.getUv().getY();
                             if (u >1){
@@ -122,32 +131,70 @@ public class Controller3D implements Controller {
                             if (v <0){
                                 v= 0;
                             }
-                            System.out.println(u+";"+v);
-                            return new Col(houseTexture.getRGB((int) (u*(houseTexture.getWidth()-1)), (int) (v*(houseTexture.getHeight()-1))));
+                            col = new Col(houseTexture.getRGB((int) (u*(houseTexture.getWidth()-1)), (int) (v*(houseTexture.getHeight()-1))));
+                            col = col.mul(scene.getAmbientLight());
+                            Vec3D dirToLight = scene.getLightSource().getPostition().dehomog().orElse(new Vec3D(1,0,0)).add(vert.getPosition().dehomog().orElse(new Vec3D(0,0,0)));
+                            col = col.mul(scene.getLightSource().getLightColor().mul(vert.getNormal().dot(dirToLight)));
+                            System.out.println("colcca"+vert.getNormal().dot(dirToLight));
+                            return col;
                         }
                     };
-                    solid.setShader(textShader);
+                    scene.getSolids().get(scene.selected).setShader(textShader);
                 }
-                if (e.getKeyCode() == KeyEvent.VK_W) {
-                    scene.setView(scene.getView().forward(speed));
+                if (e.getKeyCode() == KeyEvent.VK_X){
+                    scene.getSolids().get(scene.selected).setModel(new Mat4RotX(Math.PI/8).mul(scene.getSolids().get(scene.selected).getModel()));
                 }
-                if (e.getKeyCode() == KeyEvent.VK_A) {
-                    scene.setView(scene.getView().left(speed));
+                if (e.getKeyCode() == KeyEvent.VK_Y){
+                    scene.getSolids().get(scene.selected).setModel(new Mat4RotY(Math.PI/8).mul(scene.getSolids().get(scene.selected).getModel()));
                 }
-                if (e.getKeyCode() == KeyEvent.VK_S) {
-                    scene.setView(scene.getView().backward(speed));
+                if (e.getKeyCode() == KeyEvent.VK_Z){
+                    scene.getSolids().get(scene.selected).setModel(new Mat4RotZ(Math.PI/8).mul(scene.getSolids().get(scene.selected).getModel()));
                 }
-                if (e.getKeyCode() == KeyEvent.VK_D) {
-                    scene.setView(scene.getView().right(speed));
+                if (e.getKeyCode() == KeyEvent.VK_CONTROL){
+                    translMode = !translMode;
                 }
-                if (e.getKeyCode() == KeyEvent.VK_SHIFT) {
-                    scene.setView(scene.getView().down(speed));
+                if (translMode){
+                    if (e.getKeyCode() == KeyEvent.VK_W) {
+                        scene.getSolids().get(scene.selected).setModel(new Mat4Transl(1,0,0).mul(scene.getSolids().get(scene.selected).getModel()));
+                    }
+                    if (e.getKeyCode() == KeyEvent.VK_A) {
+                        scene.getSolids().get(scene.selected).setModel(new Mat4Transl(0,-1,0).mul(scene.getSolids().get(scene.selected).getModel()));
+                    }
+                    if (e.getKeyCode() == KeyEvent.VK_S) {
+                        scene.getSolids().get(scene.selected).setModel(new Mat4Transl(-1,0,0).mul(scene.getSolids().get(scene.selected).getModel()));
+                    }
+                    if (e.getKeyCode() == KeyEvent.VK_D) {
+                        scene.getSolids().get(scene.selected).setModel(new Mat4Transl(0,1,0).mul(scene.getSolids().get(scene.selected).getModel()));
+                    }
+                    if (e.getKeyCode() == KeyEvent.VK_SHIFT) {
+                        scene.getSolids().get(scene.selected).setModel(new Mat4Transl(0,0,-1).mul(scene.getSolids().get(scene.selected).getModel()));
+                    }
+                    if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+                        scene.getSolids().get(scene.selected).setModel(new Mat4Transl(0,0,1).mul(scene.getSolids().get(scene.selected).getModel()));
+                    }
                 }
-                if (e.getKeyCode() == KeyEvent.VK_SPACE) {
-                    scene.setView(scene.getView().up(speed));
+                else {
+                    if (e.getKeyCode() == KeyEvent.VK_W) {
+                        scene.setView(scene.getView().forward(speed));
+                    }
+                    if (e.getKeyCode() == KeyEvent.VK_A) {
+                        scene.setView(scene.getView().left(speed));
+                    }
+                    if (e.getKeyCode() == KeyEvent.VK_S) {
+                        scene.setView(scene.getView().backward(speed));
+                    }
+                    if (e.getKeyCode() == KeyEvent.VK_D) {
+                        scene.setView(scene.getView().right(speed));
+                    }
+                    if (e.getKeyCode() == KeyEvent.VK_SHIFT) {
+                        scene.setView(scene.getView().down(speed));
+                    }
+                    if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+                        scene.setView(scene.getView().up(speed));
+                    }
                 }
                 if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-                    solid.setModel(solid.getModel().mul(new Mat4Rot(0.5,1,new Vec3D(1,1,1))));
+                    scene.getSolids().get(scene.selected).setShader(new LerpColorShader());
                 }
 
                 renderScene();
@@ -173,6 +220,7 @@ public class Controller3D implements Controller {
         for (Solid solid1 : scene.getSolids()){
             renderer.render(solid1);
         }
+        //renderer.render(scene.getLightSource().getSolid());
         System.out.println(scene.getView().getViewVector());
 
         panel.repaint();

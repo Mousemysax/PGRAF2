@@ -59,7 +59,6 @@ public class TriangleRasterizerBasic extends TriangleRasterizer {
             for (int x = (int) ab.getX(); x < ac.getX(); x++) {
                 double t = (x - ab.getX()) / (ac.getX() - ab.getX());
                 Vertex pixel = lerp.lerp(ab, ac, t);
-                System.out.println("pixelZ: "+pixel.getZ());
                 zBuffer.setPixelZ(x,y, pixel.getZ(), shader.getColor(pixel));
             }
         }

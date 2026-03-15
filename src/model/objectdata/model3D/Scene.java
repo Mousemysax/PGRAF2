@@ -1,7 +1,9 @@
 package model.objectdata.model3D;
 
+import model.solid.LightSource;
 import model.solid.Solid;
 import transforms.Camera;
+import transforms.Col;
 import transforms.Mat4;
 import transforms.Mat4PerspRH;
 import view.Panel;
@@ -14,14 +16,18 @@ public class Scene {
     private final List<Solid> solids;
     private Camera view;
     private Mat4 proj;
+    public int selected=0;
+    private LightSource lightSource;
+    private Col ambientLight = new Col(0x00ff00);
 
     private int screenWidth;
     private int screenHeight;
 
-    public Scene(List<Solid> solids, Camera view, Mat4 proj, Panel panel) {
+    public Scene(List<Solid> solids, Camera view, Mat4 proj, LightSource lightSource, Panel panel) {
         this.solids = solids;
         this.view = view;
         this.proj = proj;
+        this.lightSource = lightSource;
         this.screenWidth = panel.getWidth();
         this.screenHeight = panel.getHeight();
     }
@@ -60,6 +66,22 @@ public class Scene {
 
     public void setScreenHeight(int screenHeight) {
         this.screenHeight = screenHeight;
+    }
+
+    public LightSource getLightSource() {
+        return lightSource;
+    }
+
+    public Col getAmbientLight() {
+        return ambientLight;
+    }
+
+    public void setAmbientLight(Col ambientLight) {
+        this.ambientLight = ambientLight;
+    }
+
+    public void setLightSource(LightSource lightSource) {
+        this.lightSource = lightSource;
     }
 
     ;}

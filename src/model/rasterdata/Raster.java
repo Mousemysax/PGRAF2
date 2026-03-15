@@ -4,17 +4,12 @@ import java.awt.*;
 
 public interface Raster<T> {
 
-    /**
-     * Metoda pre vycistenie rastra
-     */
+
     void clear();
 
     void repaint(Graphics g);
 
-    /**
-     * Vrati pocet stlpcov v rastri
-     * @return pocet stlpcov
-     */
+
     int getWidth();
 
 

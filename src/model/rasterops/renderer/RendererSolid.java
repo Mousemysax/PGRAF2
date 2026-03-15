@@ -72,7 +72,6 @@ public class RendererSolid {
 
                         // TODO: vrcholy pronásobím MVP
 
-
                         // TODO: ořezání
 
                         double zMin = 0;
@@ -100,7 +99,6 @@ public class RendererSolid {
 
                         if (a.getZ() < zMin){
 
-                            System.out.println("peanits A");
                             continue;
                         }
                         else if (b.getZ() < zMin){
@@ -109,12 +107,9 @@ public class RendererSolid {
                             double tAC = (a.getZ() - zMin)/(a.getZ()-c.getZ());
                             Vertex vAC = lerp.lerp(a,b,tAC);
                             renderTriangle(a, vAB,vAC, solid.getShader());
-                            System.out.println("peanits B");
                             continue;
                         }
                         else if (c.getZ() < zMin){
-
-                            System.out.println("peanits C");
 
                             double tBC = (b.getZ() - zMin)/(b.getZ()-c.getZ());
                             Vertex vBC = lerp.lerp(b,c,tBC);
@@ -125,7 +120,6 @@ public class RendererSolid {
                             continue;
                         }
                         else {
-                            System.out.println("no peanits");
                             renderTriangle(a,b,c,solid.getShader());
                         }
 
@@ -159,11 +153,9 @@ public class RendererSolid {
     }
 
     private void transformToWindow(Vertex p) {
-        System.out.println(p.getPosition());
         p.setPosition(new Point3D(new Vec3D(p.getPosition()).mul(new Vec3D(1,-1,1))));
         p.setPosition(new Point3D(new Vec3D(p.getPosition()).add(new Vec3D(1,1,0))));
         p.setPosition(new Point3D(new Vec3D(p.getPosition()).mul(new Vec3D((double) (scene.getScreenWidth() - 1) /2, (double) (scene.getScreenHeight() - 1) /2,1))));
-        System.out.println(p.getPosition());
     }
 
     private boolean isInView(Vertex v){
