@@ -133,9 +133,7 @@ public class Controller3D implements Controller {
                             }
                             col = new Col(houseTexture.getRGB((int) (u*(houseTexture.getWidth()-1)), (int) (v*(houseTexture.getHeight()-1))));
                             col = col.mul(scene.getAmbientLight());
-                            Vec3D dirToLight = scene.getLightSource().getPostition().dehomog().orElse(new Vec3D(1,0,0)).add(vert.getPosition().dehomog().orElse(new Vec3D(0,0,0)));
-                            col = col.mul(scene.getLightSource().getLightColor().mul(vert.getNormal().dot(dirToLight)));
-                            System.out.println("colcca"+vert.getNormal().dot(dirToLight));
+
                             return col;
                         }
                     };
@@ -149,6 +147,12 @@ public class Controller3D implements Controller {
                 }
                 if (e.getKeyCode() == KeyEvent.VK_Z){
                     scene.getSolids().get(scene.selected).setModel(new Mat4RotZ(Math.PI/8).mul(scene.getSolids().get(scene.selected).getModel()));
+                }
+                if (e.getKeyCode() == KeyEvent.VK_O){
+                    scene.getSolids().get(scene.selected).setModel(new Mat4Scale(0.9).mul(scene.getSolids().get(scene.selected).getModel()));
+                }
+                if (e.getKeyCode() == KeyEvent.VK_I){
+                    scene.getSolids().get(scene.selected).setModel(new Mat4Scale(1.1).mul(scene.getSolids().get(scene.selected).getModel()));
                 }
                 if (e.getKeyCode() == KeyEvent.VK_CONTROL){
                     translMode = !translMode;
