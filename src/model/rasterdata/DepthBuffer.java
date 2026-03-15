@@ -13,14 +13,13 @@ public class DepthBuffer implements Raster<Double> {
         this.width = width;
         this.height = height;
         this.buffer = new  double[height][width];
-        for (double[] row: buffer)
-            Arrays.fill(row, 1.0);
+        clear();
     }
 
     @Override
     public void clear() {
         for (double[] row: buffer)
-            Arrays.fill(row, 1.0);
+            Arrays.fill(row, Integer.MAX_VALUE);
     }
 
     @Override

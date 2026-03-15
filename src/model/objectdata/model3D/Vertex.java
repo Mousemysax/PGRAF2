@@ -1,12 +1,12 @@
 package model.objectdata.model3D;
 
-import transforms.Col;
-import transforms.Point3D;
-import transforms.Vec2D;
+import transforms.*;
 
 
 public class Vertex implements Vectorizable<Vertex> {
-    private final Point3D position;
+
+
+    private Point3D position;
     private final Col color;
 
     public Vec2D getUv() {
@@ -49,6 +49,10 @@ public class Vertex implements Vectorizable<Vertex> {
         return position;
     }
 
+    public void setPosition(Point3D position) {
+        this.position = position;
+    }
+
     public Col getColor() {
         return color;
     }
@@ -70,6 +74,11 @@ public class Vertex implements Vectorizable<Vertex> {
         return new Vertex(this.position.mul(d), this.color.mul(d),this.uv.mul(d));
     }
 
+
+    public Vertex mul(Mat4 mat) {
+        return new Vertex(this.position.mul(mat), this.color,this.uv);
+    }
+
     @Override
     public Vertex add(Vertex v) {
         return new Vertex(this.position.add(v.getPosition()), this.color.add(v.getColor()),this.uv.add(v.getUv()));
@@ -77,5 +86,10 @@ public class Vertex implements Vectorizable<Vertex> {
 
     public Vertex lerp(Vertex v1, Vertex v2,double t) {
         return new Vertex(position);
+    }
+
+    public Vertex dehomogenized(){
+         position = new Point3D(position.dehomog().orElse(new Vec3D(0,0,0)));
+        return this;
     }
 }

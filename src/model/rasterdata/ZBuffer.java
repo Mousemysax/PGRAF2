@@ -13,6 +13,7 @@ public class ZBuffer {
 
     public void setPixelZ(int x, int y, double z,Col color) {
         if(x <0 || y <0 || z <0 || x >= imageBuffer.getWidth() || y >= imageBuffer.getHeight()) {
+           // System.out.println("error at:"+x+","+y+","+z);
             return;
         }
         if(depthBuffer.getValue(x,y) > z){

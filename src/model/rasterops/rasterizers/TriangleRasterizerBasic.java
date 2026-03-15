@@ -40,13 +40,16 @@ public class TriangleRasterizerBasic extends TriangleRasterizer {
         int ay = (int)Math.round(a.getY());
         int by = (int)Math.round(b.getY());
         int cy = (int)Math.round(c.getY());
-
+//
+//        System.out.println("rastr "+a.getX()+";"+b.getX()+";"+c.getX());
         for (int y = ay; y < by; y++) {
             double tAB = (double) (y - ay) /(by-ay);
             Vertex ab = lerp.lerp(a, b, tAB);
             double tAC = (double) (y - ay) /(cy-ay);
             Vertex ac = lerp.lerp(a, c, tAC);
 
+//            System.out.println(a.getX()+";"+b.getX()+";"+c.getX());
+//            System.out.println(ab.getX()+";"+ac.getX());
             if (ab.getX() > ac.getX()){
                 Vertex tempX = ab;
                 ab = ac;
@@ -56,6 +59,7 @@ public class TriangleRasterizerBasic extends TriangleRasterizer {
             for (int x = (int) ab.getX(); x < ac.getX(); x++) {
                 double t = (x - ab.getX()) / (ac.getX() - ab.getX());
                 Vertex pixel = lerp.lerp(ab, ac, t);
+                System.out.println("pixelZ: "+pixel.getZ());
                 zBuffer.setPixelZ(x,y, pixel.getZ(), shader.getColor(pixel));
             }
         }
@@ -74,7 +78,6 @@ public class TriangleRasterizerBasic extends TriangleRasterizer {
             for (int x = (int) bc.getX(); x < ac.getX(); x++) {
                 double t = (x - bc.getX()) / (ac.getX() - bc.getX());
                 Vertex pixel = lerp.lerp(bc, ac, t);
-
                 //System.out.println(shader.getClass());
                 zBuffer.setPixelZ(x,y, pixel.getZ(), shader.getColor(pixel));
             }
