@@ -3,6 +3,7 @@ package controller;
 import controller.shader.ConstColorShader;
 import controller.shader.LerpColorShader;
 import controller.shader.Shader;
+import controller.shader.TextPhongShader;
 import model.objectdata.model3D.*;
 import model.rasterdata.Raster;
 import model.rasterdata.RasterBI;
@@ -61,7 +62,7 @@ public class Controller3D implements Controller {
                 new ArrayList<Solid>(),
                 new Camera(new Vec3D(0, 0,0 ), 0 , 0, 5, true),
                 new Mat4PerspRH(Math.PI/2, (double) panel.getHeight() /panel.getWidth(),0.1,10000),
-                new LightSource(new Sphere(20),new Col(0xff0000)),
+                new LightSource(new Sphere(20),new Col(0xffffff)),
                 panel);
         this.renderer = new RendererSolid(lineRasterizer,triangleRasterizer,scene);
         initObjects(raster);
@@ -124,37 +125,7 @@ public class Controller3D implements Controller {
                     System.out.println(scene.selected);
                 }
                 if (e.getKeyCode() == KeyEvent.VK_UP) {
-                    Shader textShader = new Shader() {
-                        @Override
-                        public Col getColor(Vertex vert) {
-                            Col col;
-                            double u = vert.getUv().getX();
-                            double v =  vert.getUv().getY();
-                            if (u >1){
-                                u= 1;
-                            }
-                            if (v >1){
-                                v= 1;
-                            }
-                            if (u <0){
-                                u= 0;
-                            }
-                            if (v <0){
-                                v= 0;
-                            }
-                            col = new Col(houseTexture.getRGB((int) (u*(houseTexture.getWidth()-1)), (int) (v*(houseTexture.getHeight()-1))));
-                            col = col.mul(scene.getAmbientLight());
-                            //Vec3D dirToLight = scene.getLightSource().getPostition().dehomog().orElse(new Vec3D(1,0,0)).add(vert.getPosition().dehomog().orElse(new Vec3D(0,0,0).opposite())).normalized().orElse(new Vec3D(1,0,0));
-                            Vec3D dirToLight = new Vec3D(0,1,1);
-                            col = col.add(scene.getLightSource().getLightColor().mul(Math.max(vert.getNormal().dot(dirToLight),0)));
-//                            System.out.println("normal");
-//                            System.out.println(vert.getPosition());
-//                            System.out.println(scene.getLightSource().getPostition());
-//                            System.out.println(dirToLight);
-//                            System.out.println(vert.getNormal().dot(dirToLight));
-                            return col;
-                        }
-                    };
+                    Shader textShader = new TextPhongShader(scene,houseTexture);
                     scene.getSolids().get(scene.selected).setShader(textShader);
                 }
                 if (e.getKeyCode() == KeyEvent.VK_X){

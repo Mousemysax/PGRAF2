@@ -77,10 +77,17 @@ public class RendererSolid {
                         int indexB = solid.getIndexBuffer().get(index++);
                         int indexC = solid.getIndexBuffer().get(index++);
 
-                        Vertex a = solid.getVertexBuffer().get(indexA).mul(mvp);
-                        Vertex b = solid.getVertexBuffer().get(indexB).mul(mvp);
-                        Vertex c = solid.getVertexBuffer().get(indexC).mul(mvp);
+                        Vertex a = solid.getVertexBuffer().get(indexA);
+                        Vertex b = solid.getVertexBuffer().get(indexB);
+                        Vertex c = solid.getVertexBuffer().get(indexC);
 
+                        a.setWorldPosition(a.getPosition().mul(solid.getModel()));
+                        b.setWorldPosition(b.getPosition().mul(solid.getModel()));
+                        c.setWorldPosition(c.getPosition().mul(solid.getModel()));
+
+                        a = a.mul(mvp);
+                        b = b.mul(mvp);
+                        c = c.mul(mvp);
                         // TODO: vrcholy pronásobím MVP
 
                         // TODO: ořezání

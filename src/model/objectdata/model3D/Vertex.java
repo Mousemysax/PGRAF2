@@ -9,7 +9,7 @@ public class Vertex implements Vectorizable<Vertex> {
     private Point3D position;
     private final Col color;
     private final Vec3D normal;
-    private Vec3D dirToLight = new Vec3D(0,0,1);
+    private Point3D worldPosition;
 
 
     public Vec2D getUv() {
@@ -24,31 +24,16 @@ public class Vertex implements Vectorizable<Vertex> {
         this.color = color;
         this.normal = normal;
         this.uv = uv;
+        this.worldPosition = position;
     }
-    public Vertex(Point3D position, Vec3D normal) {
-        this.position = position;
-        this.normal = normal;
-        this.uv = new Vec2D(0, 0);
-        this.color = new Col(255,255,255);
-    }
-    public Vertex(double x, double y, double z, Vec3D normal, Vec2D uv) {
-        this.normal = normal;
-        this.uv = uv;
-        this.position = new Point3D(x, y, z);
-        this.color = new Col(255,255,255);
-    }
-    public Vertex(Point3D position,Col col,Vec3D normal, Vec2D uv, Vec3D dirToLight) {
-        this.normal = normal;
-        this.color = col;
-        this.uv = uv;
-        this.position = position;
-        this.dirToLight = dirToLight;
-    }
+
+
     public Vertex(double x, double y, double z) {
         this.normal = new Vec3D(0,0,0);
         this.uv = new  Vec2D(0, 0);
         this.position = new Point3D(x, y, z);
         this.color = new Col(255,255,255);
+        this.worldPosition = position;
 
     }
     public Vertex(double x, double y, double z, Col color, Vec3D normal, Vec2D uv ){
@@ -56,21 +41,13 @@ public class Vertex implements Vectorizable<Vertex> {
         this.uv = uv;
         this.position = new Point3D(x, y, z);
         this.color = color;
-
+        this.worldPosition = position;
 
 
     }
 
     public Point3D getPosition() {
         return position;
-    }
-
-    public Vec3D getDirToLight() {
-        return dirToLight;
-    }
-
-    public void setDirToLight(Vec3D dirToLight) {
-        this.dirToLight = dirToLight;
     }
 
     public void setPosition(Point3D position) {
@@ -99,7 +76,7 @@ public class Vertex implements Vectorizable<Vertex> {
 
     @Override
     public Vertex mul(double d) {
-        return new Vertex(this.position.mul(d), this.color.mul(d),this.normal.mul(d) ,this.uv.mul(d),getDirToLight().mul(d));
+        return new Vertex(this.position.mul(d), this.color.mul(d),this.normal.mul(d) ,this.uv.mul(d));
     }
 
 
@@ -109,12 +86,20 @@ public class Vertex implements Vectorizable<Vertex> {
 
     @Override
     public Vertex add(Vertex v) {
-        return new Vertex(this.position.add(v.getPosition()), this.color.add(v.getColor()), this.normal.add(v.getNormal()), this.uv.add(v.getUv()),getDirToLight().add(v.getDirToLight()));
+        return new Vertex(this.position.add(v.getPosition()), this.color.add(v.getColor()), this.normal.add(v.getNormal()), this.uv.add(v.getUv()));
     }
 
 
     public Vertex dehomogenized(){
          position = new Point3D(position.dehomog().orElse(new Vec3D(0,0,0)));
         return this;
+    }
+
+    public Point3D getWorldPosition() {
+        return worldPosition;
+    }
+
+    public void setWorldPosition(Point3D worldPosition) {
+        this.worldPosition = worldPosition;
     }
 }
