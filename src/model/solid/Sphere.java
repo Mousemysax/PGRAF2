@@ -30,22 +30,31 @@ public class Sphere extends Solid{
                         new Vertex(
                                 x, y, z,
                                 new Col(0xffffff),
-                                new Vec3D(x,y,z),
+                                new Vec3D(x,y,z).normalized().orElse(new Vec3D(0,0,1)),
                                 new Vec2D(u, v)
                         )
                 );
             }
         }
 
+        int stride = smoothness + 1;
+
 // ===== INDEX BUFFER =====
         for (int i = 0; i < smoothness; i++) {
             for (int j = 0; j < smoothness; j++) {
 
-                int first = i * (smoothness + 1) + j;
-                int second = first + smoothness + 1;
+                int a = i * stride + j;
+                int b = a + 1;
+                int c = a + stride;
+                int d = c + 1;
 
-                addIndices(first, second, first + 1);
-                addIndices(second, second + 1, first + 1);
+                indexBuffer.add(a);
+                indexBuffer.add(c);
+                indexBuffer.add(b);
+
+                indexBuffer.add(b);
+                indexBuffer.add(c);
+                indexBuffer.add(d);
             }
         }
 

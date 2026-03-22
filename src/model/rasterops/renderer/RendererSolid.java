@@ -8,6 +8,7 @@ import model.objectdata.model3D.Vertex;
 import model.rasterops.rasterizers.LineRasterizer;
 import model.rasterops.rasterizers.TriangleRasterizer;
 import model.solid.Solid;
+import transforms.Mat3;
 import transforms.Mat4;
 import transforms.Point3D;
 import transforms.Vec3D;
@@ -52,7 +53,6 @@ public class RendererSolid {
 
                         if(!isInView(a)&&!isInView(b)){
 
-                            System.out.println(a.getPosition());
                             continue;
                         }
 
@@ -84,6 +84,13 @@ public class RendererSolid {
                         a.setWorldPosition(a.getPosition().mul(solid.getModel()));
                         b.setWorldPosition(b.getPosition().mul(solid.getModel()));
                         c.setWorldPosition(c.getPosition().mul(solid.getModel()));
+
+                        Mat4 normalMat = solid.getModel().inverse().orElse(solid.getModel()).transpose();
+                        Mat3 normalMat3 = new Mat3(normalMat);
+
+                        a.setNormal(a.getNormal().mul(normalMat3).normalized().orElse(new Vec3D(0,0,1)));
+                        b.setNormal(b.getNormal().mul(normalMat3).normalized().orElse(new Vec3D(0,0,1)));
+                        c.setNormal(c.getNormal().mul(normalMat3).normalized().orElse(new Vec3D(0,0,1)));
 
                         a = a.mul(mvp);
                         b = b.mul(mvp);
@@ -156,16 +163,11 @@ public class RendererSolid {
         // TODO: transformace do okna
 
 
-//        System.out.println("prewind A: "+a.getX()+","+a.getY()+","+0.5);
-//        System.out.println(" B: "+b.getX()+","+b.getY()+","+0.5);
-//        System.out.println(" C: "+c.getX()+","+c.getY()+","+0.5);
            transformToWindow(a);
            transformToWindow(b);
            transformToWindow(c);
 //
-//        System.out.println("prerast A: "+a.getX()+","+a.getY()+","+0.5);
-//        System.out.println("prerast B: "+b.getX()+","+b.getY()+","+0.5);
-//        System.out.println("prerast C: "+c.getX()+","+c.getY()+","+0.5);
+
         // Rasterizace
         triangleRasterizer.rasterize(a, b, c,shader);
     }

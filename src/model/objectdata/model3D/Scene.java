@@ -16,7 +16,7 @@ public class Scene {
     private Mat4 projOrth;
     public int selected=0;
     private LightSource lightSource;
-    private Col ambientLight = new Col(0x00ff00);
+    private Col ambientLight = new Col(0xbbbbff);
     public boolean persp = true;
 
     private int screenWidth;

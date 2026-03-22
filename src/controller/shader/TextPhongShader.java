@@ -21,29 +21,33 @@ public class TextPhongShader implements Shader {
 
     @Override
     public Col getColor(Vertex vert) {
-        Col col;
+        Col col = new Col(0xffffff);
+        Col light = new Col();
         double u = vert.getUv().getX();
         double v = vert.getUv().getY();
         if (u > 1) {
             u = 1;
         }
-        if (v > 1) {
-            v = 1;
-        }
-        if (u < 0) {
+        else if (u < 0) {
             u = 0;
         }
-        if (v < 0) {
+        if (v > 1) {
+            v = 1;
+        } else if (v < 0) {
             v = 0;
         }
 
 
-        col = new Col(texture.getRGB((int) (u * (texture.getWidth() - 1)), (int) (v * (texture.getHeight() - 1))));
-        col = col.mul(scene.getAmbientLight());
+
+
         Point3D lightPosition = scene.getLightSource().getPostition();
         Vec3D dirToLight = (lightPosition.dehomog().orElse(new Vec3D(0,0,0)).sub(vert.getWorldPosition().dehomog().orElse(new Vec3D(0,0,0))));
-        col = col.add(scene.getLightSource().getLightColor().mul(Math.max(vert.getNormal().dot(dirToLight), 0)));
-        System.out.println("dirToLight = " + dirToLight.toString());
+        light = light.add(scene.getAmbientLight().mul(0.2));
+        light = light.add(scene.getLightSource().getLightColor().mul(Math.max(vert.getNormal().normalized().orElse(vert.getNormal()).dot(dirToLight.normalized().orElse(new Vec3D(0,0,0))), 0)).mul(0.8));
+        col = new Col(texture.getRGB((int) (u * (texture.getWidth() - 1)), (int) (v * (texture.getHeight() - 1))));
+        col = col.mul(light);
+
+        Col normCol = new Col(vert.getNormal().getX(),vert.getNormal().getY(),vert.getNormal().getZ());
         return col;
     }
 }

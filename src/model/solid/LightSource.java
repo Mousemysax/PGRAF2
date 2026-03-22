@@ -1,5 +1,6 @@
 package model.solid;
 
+import controller.shader.ConstColorShader;
 import model.objectdata.model3D.Vertex;
 import transforms.Col;
 import transforms.Point3D;
@@ -12,6 +13,7 @@ public class LightSource {
     public LightSource(Solid solid, Col lightColor) {
         this.solid = solid;
         this.lightColor = lightColor;
+        solid.setShader(new ConstColorShader(lightColor));
     }
 
     public Solid getSolid() {

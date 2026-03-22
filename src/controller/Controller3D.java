@@ -41,6 +41,8 @@ public class Controller3D implements Controller {
     private final RendererSolid renderer;
 
     private BufferedImage houseTexture;
+    private BufferedImage wislonTexture;
+    private BufferedImage formanTexture;
 
     private Solid axisZ = new Arrow();
     private Solid axisY = new Arrow();
@@ -60,13 +62,12 @@ public class Controller3D implements Controller {
         this.triangleRasterizer = new TriangleRasterizerBasic(zbuffer);
         this.scene = new Scene(
                 new ArrayList<Solid>(),
-                new Camera(new Vec3D(0, 0,0 ), 0 , 0, 5, true),
+                new Camera(new Vec3D(0, 0,5 ), 0 , 0, 5, true),
                 new Mat4PerspRH(Math.PI/2, (double) panel.getHeight() /panel.getWidth(),0.1,10000),
-                new LightSource(new Sphere(20),new Col(0xffffff)),
+                new LightSource(new Sphere(20),new Col(0xffbbbba)),
                 panel);
         this.renderer = new RendererSolid(lineRasterizer,triangleRasterizer,scene);
-        initObjects(raster);
-        initListeners(panel);
+
 
         try {
             houseTexture = ImageIO.read(new File("res/textures/house.jpg"));
@@ -74,6 +75,20 @@ public class Controller3D implements Controller {
         catch (Exception e) {
             System.out.println("Error loading house");
         }
+        try {
+            wislonTexture = ImageIO.read(new File("res/textures/wilson.jpg"));
+        }
+        catch (Exception e) {
+            System.out.println("Error loading house");
+        }
+        try {
+            formanTexture = ImageIO.read(new File("res/textures/foreman.jpg"));
+        }
+        catch (Exception e) {
+            System.out.println("Error loading house");
+        }
+        initObjects(raster);
+        initListeners(panel);
 
         renderScene();
 
@@ -96,17 +111,22 @@ public class Controller3D implements Controller {
         axisY.setModel(axisY.getModel().mul(new Mat4Scale(10)));
         axisZ.setModel(axisZ.getModel().mul(new Mat4Scale(10)));
 
-        solid = new Cube();
-        solid.setShader(new LerpColorShader());
-//        solid.setModel(solid.getModel().mul(new Mat4Scale(1000000000)));
-        solid.setModel(solid.getModel().mul(new Mat4Scale(1)));
-        solid.setModel(solid.getModel().mul(new Mat4Transl(5,0,0)));
+        solid = new TruncPyramid();
+        solid.setShader(new TextPhongShader(scene,formanTexture));
+        solid.setModel(solid.getModel().mul(new Mat4Scale(2)));
+        solid.setModel(solid.getModel().mul(new Mat4Transl(10,-10,0)));
         scene.addSolid(solid);
 
+        solid = new Cube();
+        solid.setShader(new TextPhongShader(scene,wislonTexture));
+        solid.setModel(solid.getModel().mul(new Mat4Transl(10,10,0)));
+        scene.addSolid(solid);
+
+
         solid = new Sphere(20);
-        solid.setShader(new LerpColorShader());
+        solid.setShader(new TextPhongShader(scene,houseTexture));
         solid.setModel(solid.getModel().mul(new Mat4Scale(2)));
-        solid.setModel(solid.getModel().mul(new Mat4Transl(10,5,0)));
+        solid.setModel(solid.getModel().mul(new Mat4Transl(10,0,0)));
         scene.addSolid(solid);
 
 
@@ -117,53 +137,56 @@ public class Controller3D implements Controller {
         panel.addKeyListener(new  KeyAdapter() {
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-                    scene.selected = (scene.selected+scene.getSolids().size()-1)%(scene.getSolids().size());
+                    scene.selected = (scene.selected+scene.getSolids().size())%(scene.getSolids().size()+1);
                     System.out.println(scene.selected);
                 }
                 if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-                    scene.selected = (scene.selected+scene.getSolids().size()+1)%(scene.getSolids().size());
+                    scene.selected = (scene.selected+scene.getSolids().size()+2)%(scene.getSolids().size()+1);
                     System.out.println(scene.selected);
                 }
                 if (e.getKeyCode() == KeyEvent.VK_UP) {
                     Shader textShader = new TextPhongShader(scene,houseTexture);
-                    scene.getSolids().get(scene.selected).setShader(textShader);
+                    getSelectedSolid().setShader(textShader);
+                }
+                if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+                    getSelectedSolid().setShader(new LerpColorShader());
                 }
                 if (e.getKeyCode() == KeyEvent.VK_X){
-                    scene.getSolids().get(scene.selected).setModel(new Mat4RotX(Math.PI/8).mul(scene.getSolids().get(scene.selected).getModel()));
+                    getSelectedSolid().setModel(new Mat4RotX(Math.PI/8).mul(getSelectedSolid().getModel()));
                 }
                 if (e.getKeyCode() == KeyEvent.VK_Y){
-                    scene.getSolids().get(scene.selected).setModel(new Mat4RotY(Math.PI/8).mul(scene.getSolids().get(scene.selected).getModel()));
+                    getSelectedSolid().setModel(new Mat4RotY(Math.PI/8).mul(getSelectedSolid().getModel()));
                 }
                 if (e.getKeyCode() == KeyEvent.VK_Z){
-                    scene.getSolids().get(scene.selected).setModel(new Mat4RotZ(Math.PI/8).mul(scene.getSolids().get(scene.selected).getModel()));
+                    getSelectedSolid().setModel(new Mat4RotZ(Math.PI/8).mul(getSelectedSolid().getModel()));
                 }
                 if (e.getKeyCode() == KeyEvent.VK_O){
-                    scene.getSolids().get(scene.selected).setModel(new Mat4Scale(0.9).mul(scene.getSolids().get(scene.selected).getModel()));
+                    getSelectedSolid().setModel(new Mat4Scale(0.9).mul(getSelectedSolid().getModel()));
                 }
                 if (e.getKeyCode() == KeyEvent.VK_I){
-                    scene.getSolids().get(scene.selected).setModel(new Mat4Scale(1.1).mul(scene.getSolids().get(scene.selected).getModel()));
+                    getSelectedSolid().setModel(new Mat4Scale(1.1).mul(getSelectedSolid().getModel()));
                 }
                 if (e.getKeyCode() == KeyEvent.VK_CONTROL){
                     translMode = !translMode;
                 }
                 if (translMode){
                     if (e.getKeyCode() == KeyEvent.VK_W) {
-                        scene.getSolids().get(scene.selected).setModel(new Mat4Transl(1,0,0).mul(scene.getSolids().get(scene.selected).getModel()));
+                        getSelectedSolid().setModel(new Mat4Transl(1,0,0).mul(getSelectedSolid().getModel()));
                     }
                     if (e.getKeyCode() == KeyEvent.VK_A) {
-                        scene.getSolids().get(scene.selected).setModel(new Mat4Transl(0,-1,0).mul(scene.getSolids().get(scene.selected).getModel()));
+                        getSelectedSolid().setModel(new Mat4Transl(0,-1,0).mul(getSelectedSolid().getModel()));
                     }
                     if (e.getKeyCode() == KeyEvent.VK_S) {
-                        scene.getSolids().get(scene.selected).setModel(new Mat4Transl(-1,0,0).mul(scene.getSolids().get(scene.selected).getModel()));
+                        getSelectedSolid().setModel(new Mat4Transl(-1,0,0).mul(getSelectedSolid().getModel()));
                     }
                     if (e.getKeyCode() == KeyEvent.VK_D) {
-                        scene.getSolids().get(scene.selected).setModel(new Mat4Transl(0,1,0).mul(scene.getSolids().get(scene.selected).getModel()));
+                        getSelectedSolid().setModel(new Mat4Transl(0,1,0).mul(getSelectedSolid().getModel()));
                     }
                     if (e.getKeyCode() == KeyEvent.VK_SHIFT) {
-                        scene.getSolids().get(scene.selected).setModel(new Mat4Transl(0,0,-1).mul(scene.getSolids().get(scene.selected).getModel()));
+                        getSelectedSolid().setModel(new Mat4Transl(0,0,-1).mul(getSelectedSolid().getModel()));
                     }
                     if (e.getKeyCode() == KeyEvent.VK_SPACE) {
-                        scene.getSolids().get(scene.selected).setModel(new Mat4Transl(0,0,1).mul(scene.getSolids().get(scene.selected).getModel()));
+                        getSelectedSolid().setModel(new Mat4Transl(0,0,1).mul(getSelectedSolid().getModel()));
                     }
                 }
                 else {
@@ -186,9 +209,6 @@ public class Controller3D implements Controller {
                         scene.setView(scene.getView().up(speed));
                     }
                 }
-                if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-                    scene.getSolids().get(scene.selected).setShader(new LerpColorShader());
-                }
                 if (e.getKeyCode() == KeyEvent.VK_P){
                     scene.persp = !scene.persp;
                 }
@@ -209,6 +229,12 @@ public class Controller3D implements Controller {
     }
 
 
+    public Solid getSelectedSolid(){
+        if (scene.selected>= scene.getSolids().size()){
+            return scene.getLightSource().getSolid();
+        }
+        return scene.getSolids().get(scene.selected);
+    }
 
     public void renderScene() {
         panel.clear();
@@ -216,6 +242,7 @@ public class Controller3D implements Controller {
         for (Solid solid1 : scene.getSolids()){
             renderer.render(solid1);
         }
+        renderer.render(scene.getLightSource().getSolid());
         renderer.render(axisX);
         renderer.render(axisY);
         renderer.render(axisZ);

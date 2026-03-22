@@ -40,29 +40,26 @@ public class TriangleRasterizerBasic extends TriangleRasterizer {
         int ay = (int)Math.round(a.getY());
         int by = (int)Math.round(b.getY());
         int cy = (int)Math.round(c.getY());
-//
-//        System.out.println("rastr "+a.getX()+";"+b.getX()+";"+c.getX());
-        for (int y = ay; y < by; y++) {
+
+        for (int y = Integer.max(ay,0); y < Integer.min(by, zBuffer.getHeight()); y++) {
             double tAB = (double) (y - ay) /(by-ay);
             Vertex ab = lerp.lerp(a, b, tAB);
             double tAC = (double) (y - ay) /(cy-ay);
             Vertex ac = lerp.lerp(a, c, tAC);
 
-//            System.out.println(a.getX()+";"+b.getX()+";"+c.getX());
-//            System.out.println(ab.getX()+";"+ac.getX());
             if (ab.getX() > ac.getX()){
                 Vertex tempX = ab;
                 ab = ac;
                 ac = tempX;
             }
 
-            for (int x = (int) ab.getX(); x < ac.getX(); x++) {
+            for (int x = Integer.max((int) ab.getX(),0); x < Integer.min((int)ac.getX(), zBuffer.getWidth()); x++) {
                 double t = (x - ab.getX()) / (ac.getX() - ab.getX());
                 Vertex pixel = lerp.lerp(ab, ac, t);
                 zBuffer.setPixelZ(x,y, pixel.getZ(), shader.getColor(pixel));
             }
         }
-        for (int y = by; y < cy; y++) {
+        for (int y = Integer.max(by,0); y < Integer.min(cy, zBuffer.getHeight()); y++) {
             double tBC = (double) (y - by) /(cy-by);
             Vertex bc = lerp.lerp(b, c, tBC);
             double tAC = (double) (y - ay) /(cy-ay);
@@ -74,10 +71,9 @@ public class TriangleRasterizerBasic extends TriangleRasterizer {
                 ac = tempX;
             }
 
-            for (int x = (int) bc.getX(); x < ac.getX(); x++) {
+            for (int x = Integer.max((int) bc.getX(),0); x < Integer.min((int)ac.getX(), zBuffer.getWidth()); x++) {
                 double t = (x - bc.getX()) / (ac.getX() - bc.getX());
                 Vertex pixel = lerp.lerp(bc, ac, t);
-                //System.out.println(shader.getClass());
                 zBuffer.setPixelZ(x,y, pixel.getZ(), shader.getColor(pixel));
             }
         }

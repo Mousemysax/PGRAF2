@@ -21,15 +21,16 @@ public class LineRasterizerBasic extends LineRasterizer {
         }
         Lerp<Vertex> lerp = new Lerp<>();
 
+
         int ay = (int)Math.round(a.getY());
         int by = (int)Math.round(b.getY());
 
-        for (int y = ay; y < by; y++) {
+        for (int y = Integer.max(ay,0); y < Integer.min(by, zBuffer.getHeight()); y++) {
             double tAB = (double) (y - ay) /(by-ay);
             Vertex pixel = lerp.lerp(a, b, tAB);
 
             zBuffer.setPixelZ((int) pixel.getX(),y, pixel.getZ(), shader.getColor(pixel));
-            System.out.println(pixel.getX());
+
         }
     }
 
